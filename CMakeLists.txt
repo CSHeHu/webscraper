@@ -8,14 +8,16 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-# Find libcurl package
+# Find packages package
 find_package(CURL REQUIRED)  
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 # Collect all source files in the 'src' directory
 file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 # Define the executable target
 add_executable(webscraper ${SRC_FILES})
+
 
 # Add include directories for headers
 target_include_directories(webscraper 
@@ -24,8 +26,14 @@ target_include_directories(webscraper
     ${CURL_INCLUDE_DIRS}                  # Include curl headers
 )
 
-# Link the curl library
+# Link libraries 
 target_link_libraries(webscraper PRIVATE CURL::libcurl)
+target_link_libraries(webscraper PRIVATE Qt6::Widgets)
 
 # Set the output directory for the compiled binary
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# Enable Qt's Meta-Object Compiler (MOC) and other tools
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
