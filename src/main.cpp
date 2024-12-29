@@ -23,6 +23,7 @@ int main() {
     
     std::vector<std::string> headlines;
     std::string searchWord = "class=\"front-title\">";
+    std::string lastChar = "<";
     size_t lastPos = 0;
     unsigned int headlineLength = 35;
 
@@ -37,23 +38,19 @@ int main() {
     res = curl_easy_perform(curl);
 
 
-    //std::cout << responseData;
-    //lastPos = responseData.find(searchWord, lastPos);
-    //std::cout << responseData.substr(lastPos, 50);
-
     while ( lastPos != std::string::npos){
         lastPos = responseData.find(searchWord, lastPos);
 
         if (lastPos == std::string::npos){
             continue;
-        }    
-        headlines.push_back(responseData.substr(lastPos + searchWord.size(), headlineLength));
+        }   
+        size_t lastCharPos = responseData.find(lastChar, lastPos); 
+        
+        headlines.push_back(responseData.substr(lastPos + searchWord.size(), lastCharPos - (lastPos + searchWord.size())));
         lastPos += searchWord.size();
           
     }
 
-
-    std::cout << headlines.size(); 
 
     for (const auto &i : headlines){
         std::cout << i << std::endl;
