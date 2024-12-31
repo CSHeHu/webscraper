@@ -8,6 +8,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+# Path to your Qt installation
+set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64")
+
+
 # Find packages package
 find_package(CURL REQUIRED)  
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
