@@ -16,8 +16,9 @@ set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64")
 find_package(CURL REQUIRED)  
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
-# Collect all source files in the 'src' directory
+# Collect source and header files
 file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/header/*.h")
 
 # Define the executable target
 add_executable(webscraper ${SRC_FILES})
