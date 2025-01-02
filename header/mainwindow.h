@@ -2,6 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QUrl>
+#include <QDesktopServices>
+#include <QUrl>
+#include "dataManager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,7 +23,13 @@ public:
 
 protected:
 
+private slots:
+    void openUrl(); 
+
 private:
     Ui::MainWindow *ui;
+    QVBoxLayout *buttonLayout;  // Layout to hold buttons
+    QWidget *centralWidget;     // Central widget for the layout
+    DataManager dataManager;    // Instance of DataManager to fetch headlines
 };
 #endif // MAINWINDOW_H
