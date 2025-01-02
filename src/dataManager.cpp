@@ -17,6 +17,8 @@ void DataManager::updateData()
     const char* url = "https://www.iltalehti.fi";
     std::string titleBegin = "class=\"front-title\">";
     std::string titleEnd = "<";
+    std::string urlBegin = "<a href=\"";
+    std::string urlEnd = "\"";
     size_t lastPos = 0;
 
     curl = curl_easy_init();
@@ -40,10 +42,10 @@ void DataManager::updateData()
             size_t titleEndPos = responseData.find(titleEnd, lastPos);
             std::string hlTemp = responseData.substr(lastPos + titleBegin.size(), titleEndPos - (lastPos + titleBegin.size()));
             
-            // below search for headline url
-            size_t urlStartPos = responseData.rfind("<a href=\"", lastPos);
-            size_t urlEndPos = responseData.find("\"", urlStartPos + 10);
-            std::string hlUrlTemp = responseData.substr(urlStartPos + 10, urlEndPos - (urlStartPos + 10));
+            // search for headline url
+            size_t urlStartPos = responseData.rfind(urlBegin, lastPos);
+            size_t urlEndPos = responseData.find(urlEnd, urlStartPos + urlBegin.size());
+            std::string hlUrlTemp = url + responseData.substr(urlStartPos + urlBegin.size(), urlEndPos - (urlStartPos + urlBegin.size()));
             
             hl tmpHeadline = {hlTemp, hlUrlTemp};
             headlines.push_back(tmpHeadline);
