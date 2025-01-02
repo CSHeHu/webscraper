@@ -40,7 +40,7 @@ DataManager::DataManager(){
             
             // below search for headline url
             size_t hlUrlPos = responseData.rfind("<a href=\"", lastPos);
-            size_t hlUrllastPos = responseData.find("\">", hlUrlPos);
+            size_t hlUrllastPos = responseData.find("\"", hlUrlPos + 10);
             
             std::string hlUrlTemp = responseData.substr(hlUrlPos + 10, hlUrllastPos - (hlUrlPos + 10));
             
