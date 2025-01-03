@@ -32,5 +32,8 @@ private:
     QVBoxLayout *buttonLayout;  // Layout to hold buttons
     QWidget *centralWidget;     // Central widget for the layout
     DataManager dataManager;    // Instance of DataManager to fetch headlines
+
+    void createGui();
+    void updateData();
 };
 #endif // MAINWINDOW_H

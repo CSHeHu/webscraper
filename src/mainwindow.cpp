@@ -11,7 +11,17 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("Uutiset");
     this-> setMinimumSize(600,800);
 
+    createGui();
+    updateData();
+}
 
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::createGui()
+{
     // Create a scroll area
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
@@ -25,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent)
     // create button layout 
     buttonLayout = new QVBoxLayout(centralWidget);
     centralWidget->setLayout(buttonLayout);
+}
 
+void MainWindow::updateData()
+{
     DataManager data;
     data.updateData();
 
@@ -48,11 +61,6 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
 
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
 }
 
 void MainWindow::openUrl()
