@@ -24,11 +24,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Create buttons for each headline
     for (const auto &headline : headlines) {
+
+        // skipping empty headlines if any
+        if (headline.headline.size() == 0){
+            continue;
+        }
+
         QPushButton *button = new QPushButton(QString::fromStdString(headline.headline), centralWidget);
         button->setProperty("url", QString::fromStdString(headline.headlineUrl)); // Store URL as property
         connect(button, &QPushButton::clicked, this, &MainWindow::openUrl);
         buttonLayout->addWidget(button); // Add button to the layout
     }
+
+
 }
 
 MainWindow::~MainWindow()
