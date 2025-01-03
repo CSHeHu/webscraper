@@ -31,14 +31,31 @@ void MainWindow::createGui()
     centralWidget = new QWidget(scrollArea);
     scrollArea->setWidget(centralWidget);
     
-    
     // create button layout 
     buttonLayout = new QVBoxLayout(centralWidget);
     centralWidget->setLayout(buttonLayout);
+
+    // Create toolbar
+    toolBar = addToolBar(tr("Menu"));
+    QPushButton *button = new QPushButton("Update", toolBar);
+    connect(button, &QPushButton::clicked, this, &MainWindow::updateData);
+    toolBar->addWidget(button); // Add button to the layout
+
+    button = new QPushButton("Quit", toolBar);
+    connect(button, &QPushButton::clicked, QCoreApplication::quit);
+    toolBar->addWidget(button); // Add button to the layout
 }
 
 void MainWindow::updateData()
-{
+{   
+    
+    while (QLayoutItem *item = buttonLayout->takeAt(0)){
+        if (QWidget *widget = item->widget()) {
+            widget->deleteLater();
+        }
+        delete item;
+    }
+    
     DataManager data;
     data.updateData();
 

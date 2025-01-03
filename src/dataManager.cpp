@@ -20,6 +20,7 @@ void DataManager::updateData()
     std::string urlBegin = "<a href=\"";
     std::string urlEnd = "\"";
     size_t lastPos = 0;
+    headlines.clear();
 
     curl = curl_easy_init();
 
