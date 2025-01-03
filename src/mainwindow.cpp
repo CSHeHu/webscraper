@@ -11,17 +11,20 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("Uutiset");
     this-> setMinimumSize(600,800);
 
-    // Create the central widget 
-    centralWidget = new QWidget(this);
-    buttonLayout = new QVBoxLayout(centralWidget);
-    centralWidget->setLayout(buttonLayout);
 
     // Create a scroll area
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setWidget(centralWidget);
-
     setCentralWidget(scrollArea);
+    
+    // Create the central widget 
+    centralWidget = new QWidget(scrollArea);
+    scrollArea->setWidget(centralWidget);
+    
+    
+    // create button layout 
+    buttonLayout = new QVBoxLayout(centralWidget);
+    centralWidget->setLayout(buttonLayout);
 
     DataManager data;
     data.updateData();
