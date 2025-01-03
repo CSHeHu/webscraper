@@ -19,7 +19,7 @@ set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64")
 
 # Find packages package
 find_package(CURL REQUIRED)  
-find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets WebEngineWidgets REQUIRED)
 
 # Collect source and header files
 file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
@@ -42,7 +42,7 @@ target_include_directories(webscraper
 
 # Link libraries 
 target_link_libraries(webscraper PRIVATE CURL::libcurl)
-target_link_libraries(webscraper PRIVATE Qt6::Widgets)
+target_link_libraries(webscraper PRIVATE Qt6::Widgets Qt6::WebEngineWidgets)
 
 # Set the output directory for the compiled binary
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
