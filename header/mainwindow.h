@@ -7,6 +7,7 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QScrollArea>
 #include "dataManager.h"
 
 QT_BEGIN_NAMESPACE
