@@ -4,7 +4,7 @@
 #include "dataManager.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent) 
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -18,6 +18,26 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    QPushButton *button = qobject_cast<QPushButton *>(obj);
+        if (event->type() == QEvent::Enter) 
+        {
+            std::cout << "päällä" << std::endl;
+            return true;
+        } 
+        else if (event->type() == QEvent::Leave) 
+        {
+           std::cout << "pois" << std::endl;
+           return true; 
+        }
+        else 
+        {
+            // pass event to parent class
+            return QMainWindow::eventFilter(obj, event);
+        }
 }
 
 void MainWindow::createGui()
@@ -74,6 +94,7 @@ void MainWindow::updateData()
         QPushButton *button = new QPushButton(QString::fromStdString(headline.headline), centralWidget);
         button->setProperty("url", QString::fromStdString(headline.headlineUrl)); // Store URL as property
         connect(button, &QPushButton::clicked, this, &MainWindow::openUrl);
+        button->installEventFilter(this);
         buttonLayout->addWidget(button); // Add button to the layout
     }
 

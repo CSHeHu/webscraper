@@ -9,6 +9,9 @@
 #include <QUrl>
 #include <QScrollArea>
 #include <QToolBar>
+#include <QDialog>
+#include <QEvent>
+#include <QWebEngineView>
 #include "dataManager.h"
 
 QT_BEGIN_NAMESPACE
@@ -24,6 +27,7 @@ public:
     ~MainWindow();
 
 protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
     void openUrl(); 
