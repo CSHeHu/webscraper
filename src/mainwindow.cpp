@@ -1,6 +1,5 @@
 
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
 #include "dataManager.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -10,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
     this->setWindowTitle("Uutiset");
-    this-> setMinimumSize(600,800);
+    this-> setMinimumSize(800,800);
 
     createGui();
     updateData();

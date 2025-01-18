@@ -12,6 +12,7 @@
 #include <QDialog>
 #include <QEvent>
 #include <QWebEngineView>
+#include <QCoreApplication>
 #include "dataManager.h"
 
 class MainWindow : public QMainWindow
