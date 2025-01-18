@@ -5,12 +5,10 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) 
-    , ui(new Ui::MainWindow)
     , data(new DataManager)
 
 
 {
-    ui->setupUi(this);
     this->setWindowTitle("Uutiset");
     this-> setMinimumSize(600,800);
 
@@ -20,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete ui;
     delete data;
 }
 

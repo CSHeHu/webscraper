@@ -14,10 +14,6 @@
 #include <QWebEngineView>
 #include "dataManager.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -33,7 +29,6 @@ private slots:
     void openUrl(); 
 
 private:
-    Ui::MainWindow *ui;
     QVBoxLayout *buttonLayout;  // Layout to hold buttons
     QWidget *centralWidget;     // Central widget for the layout
     DataManager *data;    // Instance of DataManager to fetch headlines
