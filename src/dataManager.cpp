@@ -24,6 +24,7 @@ void DataManager::updateData()
 
     curl = curl_easy_init();
 
+
     if (curl){
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
@@ -31,6 +32,13 @@ void DataManager::updateData()
         
         res = curl_easy_perform(curl);
 
+        // validate response
+        if (res != CURLE_OK) {
+        std::cerr << "CURL error: " << curl_easy_strerror(res) << std::endl;
+        curl_easy_cleanup(curl);
+        return;
+        }
+        
         // go trough response and save every headline to vector
         while ( lastPos != std::string::npos){
             lastPos = responseData.find(titleBegin, lastPos);
