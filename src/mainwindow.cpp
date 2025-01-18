@@ -6,6 +6,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) 
     , ui(new Ui::MainWindow)
+    , data(new DataManager)
+
+
 {
     ui->setupUi(this);
     this->setWindowTitle("Uutiset");
@@ -18,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete data;
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
@@ -76,12 +80,11 @@ void MainWindow::updateData()
         delete item;
     }
     
-    DataManager data;
-    data.updateData();
+    data->updateData();
 
 
     // Fetch headlines from DataManager
-    std::vector<hl> headlines = data.getHeadlines();
+    std::vector<hl> headlines = data->getHeadlines();
 
     // Create buttons for each headline
     for (const auto &headline : headlines) {

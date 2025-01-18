@@ -1,6 +1,6 @@
 #include "dataManager.h"
 
-DataManager::DataManager()
+DataManager::DataManager() : headlines()
 {
 
 
@@ -9,6 +9,7 @@ DataManager::DataManager()
 void DataManager::updateData()
 {
 
+    headlines.clear();
     CURLcode res;
     CURL *curl;
     std::string responseData;
@@ -20,7 +21,6 @@ void DataManager::updateData()
     std::string urlBegin = "<a href=\"";
     std::string urlEnd = "\"";
     size_t lastPos = 0;
-    headlines.clear();
 
     curl = curl_easy_init();
 
