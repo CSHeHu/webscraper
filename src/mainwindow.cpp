@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
     this->setWindowTitle("Uutiset");
-    this-> setMinimumSize(800,800);
 
     createGui();
     updateData();
@@ -25,12 +24,11 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     QPushButton *button = qobject_cast<QPushButton *>(obj);
         if (event->type() == QEvent::Enter) 
         {
-            std::cout << "päällä" << std::endl;
+            newsInfoLabel->setText(button->property("url").toString());
             return true;
         } 
         else if (event->type() == QEvent::Leave) 
         {
-           std::cout << "pois" << std::endl;
            return true; 
         }
         else 
@@ -57,6 +55,7 @@ void MainWindow::createGui()
     // Create the central widget (the area where buttons are)
     centralWidget = new QWidget(scrollArea);
     scrollArea->setWidget(centralWidget);
+    scrollArea-> setMinimumWidth(1024);
     
     // Create the button layout inside the central widget
     buttonLayout = new QVBoxLayout(centralWidget);
@@ -70,8 +69,9 @@ void MainWindow::createGui()
     sideWidget->setLayout(sidePanelLayout);
 
     // Test label for side panel
-    QLabel *label = new QLabel("More content here", sideWidget);
-    sidePanelLayout->addWidget(label);
+    newsInfoLabel = new QLabel("More content here", sideWidget);
+    newsInfoLabel->setWordWrap(true);
+    sidePanelLayout->addWidget(newsInfoLabel);
 
     // Add the scroll area and side widget to the main layout
     mainLayout->addWidget(scrollArea);  

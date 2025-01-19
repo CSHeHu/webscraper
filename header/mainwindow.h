@@ -34,6 +34,7 @@ private:
     QWidget *centralWidget;     // Central widget for the layout
     DataManager *data;    // Instance of DataManager to fetch headlines
     QToolBar *toolBar;
+    QLabel *newsInfoLabel;
 
     void createGui();
     void updateData();
