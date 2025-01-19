@@ -9,7 +9,7 @@
 #include <QUrl>
 #include <QScrollArea>
 #include <QToolBar>
-#include <QDialog>
+#include <QLabel>
 #include <QEvent>
 #include <QWebEngineView>
 #include <QCoreApplication>

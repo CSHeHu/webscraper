@@ -42,28 +42,52 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
 void MainWindow::createGui()
 {
-    // Create a scroll area
-    QScrollArea *scrollArea = new QScrollArea(this);
+    // Create a main widget that will hold everything
+    QWidget *mainWidget = new QWidget(this);
+    setCentralWidget(mainWidget);
+
+    // Create a layout for the main window (horizontal layout)
+    QHBoxLayout *mainLayout = new QHBoxLayout(mainWidget);
+    mainWidget->setLayout(mainLayout);
+
+    // Create a scroll area for the central widget
+    QScrollArea *scrollArea = new QScrollArea(mainWidget);
     scrollArea->setWidgetResizable(true);
-    setCentralWidget(scrollArea);
     
-    // Create the central widget 
+    // Create the central widget (the area where buttons are)
     centralWidget = new QWidget(scrollArea);
     scrollArea->setWidget(centralWidget);
     
-    // create button layout 
+    // Create the button layout inside the central widget
     buttonLayout = new QVBoxLayout(centralWidget);
     centralWidget->setLayout(buttonLayout);
 
+    // Create a side panel widget (for additional content)
+    QWidget *sideWidget = new QWidget(mainWidget);
+    
+    // Create layout for the side widget (a vertical layout)
+    QVBoxLayout *sidePanelLayout = new QVBoxLayout(sideWidget);
+    sideWidget->setLayout(sidePanelLayout);
+
+    // Test label for side panel
+    QLabel *label = new QLabel("More content here", sideWidget);
+    sidePanelLayout->addWidget(label);
+
+    // Add the scroll area and side widget to the main layout
+    mainLayout->addWidget(scrollArea);  
+    mainLayout->addWidget(sideWidget);
+
     // Create toolbar
     toolBar = addToolBar(tr("Menu"));
-    QPushButton *button = new QPushButton("Update", toolBar);
-    connect(button, &QPushButton::clicked, this, &MainWindow::updateData);
-    toolBar->addWidget(button); // Add button to the layout
+    
+    // Create toolbar actions (instead of buttons)
+    QAction *updateAction = new QAction("Update", this);
+    connect(updateAction, &QAction::triggered, this, &MainWindow::updateData);
+    toolBar->addAction(updateAction); // Add action to toolbar
 
-    button = new QPushButton("Quit", toolBar);
-    connect(button, &QPushButton::clicked, QCoreApplication::quit);
-    toolBar->addWidget(button); // Add button to the layout
+    QAction *quitAction = new QAction("Quit", this);
+    connect(quitAction, &QAction::triggered, QCoreApplication::quit);
+    toolBar->addAction(quitAction); // Add action to toolbar    
 }
 
 void MainWindow::updateData()
