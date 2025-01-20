@@ -24,7 +24,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     QPushButton *button = qobject_cast<QPushButton *>(obj);
         if (event->type() == QEvent::Enter) 
         {
-            newsInfoLabel->setText(button->property("url").toString());
+            newsInfoLabel->setText(button->property("caption").toString());
             return true;
         } 
         else if (event->type() == QEvent::Leave) 
@@ -117,6 +117,9 @@ void MainWindow::updateData()
         QPushButton *button = new QPushButton(QString::fromStdString(headline.headline), centralWidget);
         button->setProperty("url", QString::fromStdString(headline.headlineUrl)); // Store URL as property
         connect(button, &QPushButton::clicked, this, &MainWindow::openUrl);
+        
+        button->setProperty("caption", QString::fromStdString(headline.headlineCaption)); //store caption as property
+
         button->installEventFilter(this);
         buttonLayout->addWidget(button); // Add button to the layout
     }

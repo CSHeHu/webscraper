@@ -13,6 +13,7 @@
 struct hl {
     std::string headline;    /**< The text of the headline. */
     std::string headlineUrl; /**< The URL associated with the headline. */
+    std::string headlineCaption;
 };
 
 /**
@@ -53,7 +54,7 @@ private:
      * @return The total number of bytes written.
      */
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
-
+    std::string updateCaption(const char* headlineURL);
     std::vector<hl> headlines; /**< A vector to store the extracted headlines and their URLs. */
 };
 
