@@ -2,11 +2,11 @@
 #define DATAMANAGER_H
 
 #include <iostream>
-#include <curl/curl.h>
-#include <curl/curlver.h> 
 #include <string>
 #include <vector>
-
+#include <regex>
+#include <curl/curlver.h> 
+#include <curl/curl.h>
 /**
  * @brief Struct to represent a headline and its associated URL.
  */
@@ -24,21 +24,8 @@ struct hl {
  */
 class DataManager {
 public:
-    /**
-     * @brief Constructs a new DataManager object.
-     */
     DataManager();
-
-    /**
-     * @brief Updates the internal data by fetching new content from the web.
-     */
     void updateData();
-
-    /**
-     * @brief Retrieves the list of headlines.
-     * 
-     * @return A vector containing headlines and their URLs.
-     */
     std::vector<hl> getHeadlines();
 
 private:
@@ -56,6 +43,7 @@ private:
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
     std::string updateCaption(const char* headlineURL);
     std::vector<hl> headlines; /**< A vector to store the extracted headlines and their URLs. */
+    void clearTags(std::string &origCaption);
 };
 
 #endif // DATAMANAGER_H

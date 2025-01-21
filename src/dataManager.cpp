@@ -1,4 +1,5 @@
 #include "dataManager.h"
+#include <regex>
 
 DataManager::DataManager() : headlines()
 {
@@ -98,7 +99,7 @@ std::string DataManager::updateCaption(const char* headlineURL)
     size_t lastPos = 0;
 
     curl = curl_easy_init();
-    if (curl){
+if (curl){
 
 
         curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -132,5 +133,16 @@ std::string DataManager::updateCaption(const char* headlineURL)
     
     curl_easy_cleanup(curl);
     curl = NULL;
+    clearTags(hlTemp);
+
     return hlTemp;
 }
+
+void DataManager::clearTags(std::string &origCaption){
+    // Regular expression to match HTML tags
+    std::regex html_tag_pattern("<[^>]*>");
+    // Replace HTML tags with an empty string
+    std::regex_replace(origCaption, html_tag_pattern, ""); 
+
+}
+
