@@ -142,7 +142,7 @@ void DataManager::clearTags(std::string &origCaption){
     // Regular expression to match HTML tags
     std::regex html_tag_pattern("<[^>]*>");
     // Replace HTML tags with an empty string
-    std::regex_replace(origCaption, html_tag_pattern, ""); 
+    origCaption = std::regex_replace(origCaption, html_tag_pattern, ""); 
 
 }
 

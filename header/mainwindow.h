@@ -5,15 +5,12 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QUrl>
-#include <QDesktopServices>
-#include <QUrl>
 #include <QScrollArea>
 #include <QToolBar>
 #include <QLabel>
-#include <QEvent>
-#include <QWebEngineView>
 #include <QCoreApplication>
 #include "dataManager.h"
+#include <QDesktopServices>
 
 class MainWindow : public QMainWindow
 {
