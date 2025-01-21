@@ -1,4 +1,3 @@
-
 #include "mainwindow.h"
 #include "dataManager.h"
 #include <qlabel.h>
@@ -44,7 +43,8 @@ void MainWindow::createGui()
     // Create a main widget that will hold everything
     QWidget *mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
-
+    mainWidget->setMinimumWidth(1024);
+      
     // Create a layout for the main window (horizontal layout)
     QHBoxLayout *mainLayout = new QHBoxLayout(mainWidget);
     mainWidget->setLayout(mainLayout);
@@ -56,7 +56,6 @@ void MainWindow::createGui()
     // Create the central widget (the area where buttons are)
     centralWidget = new QWidget(scrollArea);
     scrollArea->setWidget(centralWidget);
-    scrollArea-> setMinimumWidth(1024);
     
     // Create the button layout inside the central widget
     buttonLayout = new QVBoxLayout(centralWidget);
@@ -64,14 +63,14 @@ void MainWindow::createGui()
 
     // Create a side panel widget (for additional content)
     QWidget *sideWidget = new QWidget(mainWidget);
-    sideWidget->setMaximumWidth(600);
+    sideWidget->setFixedWidth(300);
 
     // Create layout for the side widget (a vertical layout)
     QVBoxLayout *sidePanelLayout = new QVBoxLayout(sideWidget);
     sideWidget->setLayout(sidePanelLayout);
 
     // Test label for side panel
-    newsInfoLabel = new QLabel("More content here", sideWidget);
+    newsInfoLabel = new QLabel("", sideWidget);
     newsInfoLabel->setWordWrap(true);
     sidePanelLayout->addWidget(newsInfoLabel);
     
