@@ -1,6 +1,7 @@
 
 #include "mainwindow.h"
 #include "dataManager.h"
+#include <qlabel.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) 
@@ -63,7 +64,8 @@ void MainWindow::createGui()
 
     // Create a side panel widget (for additional content)
     QWidget *sideWidget = new QWidget(mainWidget);
-    
+    sideWidget->setMaximumWidth(600);
+
     // Create layout for the side widget (a vertical layout)
     QVBoxLayout *sidePanelLayout = new QVBoxLayout(sideWidget);
     sideWidget->setLayout(sidePanelLayout);
@@ -72,7 +74,7 @@ void MainWindow::createGui()
     newsInfoLabel = new QLabel("More content here", sideWidget);
     newsInfoLabel->setWordWrap(true);
     sidePanelLayout->addWidget(newsInfoLabel);
-
+    
     // Add the scroll area and side widget to the main layout
     mainLayout->addWidget(scrollArea);  
     mainLayout->addWidget(sideWidget);
