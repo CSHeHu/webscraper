@@ -43,14 +43,18 @@ private:
      * @param userData Pointer to the user-provided string where data will be appended.
      * @return The total number of bytes written.
      */
-    
+
     struct providerInfo{
         std::string name;
         const char* url; 
+        std::string titleBegin;
+        std::string titleEnd; 
+        std::string urlBegin;
+        std::string urlEnd;
     };
     std::unordered_map<std::string, providerInfo> providers;
     std::vector<hl> headlines;
-    
+
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
     std::string updateCaption(const char* headlineURL);
     void clearTags(std::string &origCaption);

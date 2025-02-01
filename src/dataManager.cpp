@@ -5,6 +5,10 @@ DataManager::DataManager() : headlines()
     providerInfo iltalehti;
     iltalehti.name = "Iltalehti";
     iltalehti.url = "https://www.iltalehti.fi";
+    iltalehti.titleBegin = "class=\"front-title\">";
+    iltalehti.titleEnd = "<";
+    iltalehti.urlBegin = "<a href=\"";
+    iltalehti.urlEnd = "\"";
     providers.insert({iltalehti.name, iltalehti});
 
 }
@@ -18,13 +22,6 @@ void DataManager::updateData()
     CURLcode res;
     CURL *curl;
     std::string responseData;
-    
-    // sw and lastchar for headlinesearch, url for destination
-    //const char* url = "https://www.iltalehti.fi";
-    std::string titleBegin = "class=\"front-title\">";
-    std::string titleEnd = "<";
-    std::string urlBegin = "<a href=\"";
-    std::string urlEnd = "\"";
     size_t lastPos = 0;
 
     curl = curl_easy_init();
@@ -47,20 +44,20 @@ void DataManager::updateData()
         
         // go trough response and save every headline to vector
         while ( lastPos != std::string::npos){
-            lastPos = responseData.find(titleBegin, lastPos);
+            lastPos = responseData.find(tmpProvider.titleBegin, lastPos);
 
             if (lastPos == std::string::npos){
                 continue;
             }   
 
             // find headlines
-            size_t titleEndPos = responseData.find(titleEnd, lastPos);
-            std::string hlTemp = responseData.substr(lastPos + titleBegin.size(), titleEndPos - (lastPos + titleBegin.size()));
+            size_t titleEndPos = responseData.find(tmpProvider.titleEnd, lastPos);
+            std::string hlTemp = responseData.substr(lastPos + tmpProvider.titleBegin.size(), titleEndPos - (lastPos + tmpProvider.titleBegin.size()));
             
             // search for headline url
-            size_t urlStartPos = responseData.rfind(urlBegin, lastPos);
-            size_t urlEndPos = responseData.find(urlEnd, urlStartPos + urlBegin.size());
-            std::string hlUrlTemp = tmpProvider.url + responseData.substr(urlStartPos + urlBegin.size(), urlEndPos - (urlStartPos + urlBegin.size()));
+            size_t urlStartPos = responseData.rfind(tmpProvider.urlBegin, lastPos);
+            size_t urlEndPos = responseData.find(tmpProvider.urlEnd, urlStartPos + tmpProvider.urlBegin.size());
+            std::string hlUrlTemp = tmpProvider.url + responseData.substr(urlStartPos + tmpProvider.urlBegin.size(), urlEndPos - (urlStartPos + tmpProvider.urlBegin.size()));
 
             //get caption
             std::string hlCaptionTemp = updateCaption(hlUrlTemp.c_str());
@@ -68,7 +65,7 @@ void DataManager::updateData()
             hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
             headlines.push_back(tmpHeadline);
             
-            lastPos += titleBegin.size();
+            lastPos += tmpProvider.titleBegin.size();
             
     }
     
