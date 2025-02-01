@@ -73,7 +73,7 @@ void DataManager::updateData()
     }
 }
 
-std::vector<hl> DataManager::getHeadlines()
+std::vector<DataManager::hl> DataManager::getHeadlines()
 {
     return headlines;
 }

@@ -7,14 +7,6 @@
 #include <regex>
 #include <curl/curlver.h> 
 #include <curl/curl.h>
-/**
- * @brief Struct to represent a headline and its associated URL.
- */
-struct hl {
-    std::string headline;    /**< The text of the headline. */
-    std::string headlineUrl; /**< The URL associated with the headline. */
-    std::string headlineCaption;
-};
 
 /**
  * @brief A class to manage data fetching and processing.
@@ -24,9 +16,19 @@ struct hl {
  */
 class DataManager {
 public:
+/**
+ * @brief Struct to represent a headline and its associated URL.
+ */
+struct hl {
+    std::string headline;    
+    std::string headlineUrl;
+    std::string headlineCaption;
+};
+
     DataManager();
     void updateData();
     std::vector<hl> getHeadlines();
+
 
 private:
     /**
@@ -42,8 +44,8 @@ private:
      */
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
     std::string updateCaption(const char* headlineURL);
-    std::vector<hl> headlines; /**< A vector to store the extracted headlines and their URLs. */
+    std::vector<hl> headlines;
     void clearTags(std::string &origCaption);
 };
 
-#endif // DATAMANAGER_H
+#endif // datamanager_h

@@ -105,7 +105,7 @@ void MainWindow::updateData()
 
 
     // Fetch headlines from DataManager
-    std::vector<hl> headlines = data->getHeadlines();
+    std::vector<DataManager::hl> headlines = data->getHeadlines();
 
     // Create buttons for each headline
     for (const auto &headline : headlines) {
