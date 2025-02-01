@@ -7,6 +7,7 @@
 #include <regex>
 #include <curl/curlver.h> 
 #include <curl/curl.h>
+#include <unordered_map>
 
 /**
  * @brief A class to manage data fetching and processing.
@@ -16,15 +17,15 @@
  */
 class DataManager {
 public:
-/**
+    /**
  * @brief Struct to represent a headline and its associated URL.
  */
-struct hl {
-    std::string headline;    
-    std::string headlineUrl;
-    std::string headlineCaption;
-};
 
+    struct hl {
+        std::string headline;    
+        std::string headlineUrl;
+        std::string headlineCaption;
+    };
     DataManager();
     void updateData();
     std::vector<hl> getHeadlines();
@@ -42,9 +43,16 @@ private:
      * @param userData Pointer to the user-provided string where data will be appended.
      * @return The total number of bytes written.
      */
+    
+    struct providerInfo{
+        std::string name;
+        const char* url; 
+    };
+    std::unordered_map<std::string, providerInfo> providers;
+    std::vector<hl> headlines;
+    
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
     std::string updateCaption(const char* headlineURL);
-    std::vector<hl> headlines;
     void clearTags(std::string &origCaption);
 };
 

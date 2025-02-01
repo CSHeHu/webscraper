@@ -1,22 +1,26 @@
 #include "dataManager.h"
-#include <regex>
 
 DataManager::DataManager() : headlines()
 {
-
+    providerInfo iltalehti;
+    iltalehti.name = "Iltalehti";
+    iltalehti.url = "https://www.iltalehti.fi";
+    providers.insert({iltalehti.name, iltalehti});
 
 }
 
 void DataManager::updateData()
 {
-
+    std::string testParam = "Iltalehti"; //REMOVE
+    providerInfo tmpProvider = providers.at(testParam);
+        
     headlines.clear();
     CURLcode res;
     CURL *curl;
     std::string responseData;
     
     // sw and lastchar for headlinesearch, url for destination
-    const char* url = "https://www.iltalehti.fi";
+    //const char* url = "https://www.iltalehti.fi";
     std::string titleBegin = "class=\"front-title\">";
     std::string titleEnd = "<";
     std::string urlBegin = "<a href=\"";
@@ -27,7 +31,7 @@ void DataManager::updateData()
 
 
     if (curl){
-        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_URL, tmpProvider.url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseData); 
         
@@ -56,7 +60,7 @@ void DataManager::updateData()
             // search for headline url
             size_t urlStartPos = responseData.rfind(urlBegin, lastPos);
             size_t urlEndPos = responseData.find(urlEnd, urlStartPos + urlBegin.size());
-            std::string hlUrlTemp = url + responseData.substr(urlStartPos + urlBegin.size(), urlEndPos - (urlStartPos + urlBegin.size()));
+            std::string hlUrlTemp = tmpProvider.url + responseData.substr(urlStartPos + urlBegin.size(), urlEndPos - (urlStartPos + urlBegin.size()));
 
             //get caption
             std::string hlCaptionTemp = updateCaption(hlUrlTemp.c_str());
