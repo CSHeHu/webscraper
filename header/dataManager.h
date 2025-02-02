@@ -28,7 +28,7 @@ public:
     DataManager();
     void updateData();
     std::vector<hl> getHeadlines();
-
+    void changeProvider(std::string name);
 
 private:
     /**
@@ -55,6 +55,7 @@ private:
     };
     std::unordered_map<std::string, providerInfo> providers;
     std::vector<hl> headlines;
+    std::string selectedProvider; 
 
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
 };

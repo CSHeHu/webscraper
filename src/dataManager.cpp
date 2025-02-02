@@ -23,13 +23,13 @@ DataManager::DataManager() : headlines()
     iltasanomat.captionBegin = "<description><![CDATA[";
     iltasanomat.captionEnd = "]]></description>";
     providers.insert({iltasanomat.name, iltasanomat});
-
+    
+    selectedProvider = iltalehti.name;
 }
 
 void DataManager::updateData()
 {
-    std::string testParam = "Iltasanomat"; //REMOVE
-    providerInfo tmpProvider = providers.at(testParam);
+    providerInfo tmpProvider = providers.at(selectedProvider);
         
     headlines.clear();
     CURLcode res;
@@ -111,3 +111,9 @@ size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb, std:
     return realSize;
 }
 
+
+void DataManager::changeProvider(std::string name)
+{
+
+
+}
