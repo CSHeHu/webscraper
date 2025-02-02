@@ -81,7 +81,7 @@ void MainWindow::createGui()
     // Create toolbar
     toolBar = addToolBar(tr("Menu"));
     
-    // Create toolbar actions (instead of buttons)
+    // Create toolbar actions 
     QAction *updateAction = new QAction("Update", this);
     connect(updateAction, &QAction::triggered, this, &MainWindow::updateData);
     toolBar->addAction(updateAction); // Add action to toolbar
@@ -89,6 +89,20 @@ void MainWindow::createGui()
     QAction *quitAction = new QAction("Quit", this);
     connect(quitAction, &QAction::triggered, QCoreApplication::quit);
     toolBar->addAction(quitAction); // Add action to toolbar    
+    
+    QAction *is = new QAction("Iltasanomat", this);
+    connect(is, &QAction::triggered,this, [this]() {
+        data->changeProvider("Iltasanomat");
+        updateData();     
+    });
+    toolBar->addAction(is); // Add action to toolbar    
+    
+    QAction *il = new QAction("Iltalehti", this);
+    connect(il, &QAction::triggered,this, [this]() {
+        data->changeProvider("Iltalehti");
+        updateData();     
+    });
+    toolBar->addAction(il); // Add action to toolbar    
 }
 
 void MainWindow::updateData()

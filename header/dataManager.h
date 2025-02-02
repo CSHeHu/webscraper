@@ -46,8 +46,9 @@ public:
      * 
      * @param name The name of the provider to switch to.
      */
-    void changeProvider(std::string name);
+    void changeProvider(const std::string &name);
 
+    std::string getSelectedProvider();
 private:
     /**
      * @brief Holds provider details for fetching data.

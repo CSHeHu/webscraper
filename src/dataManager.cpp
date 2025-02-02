@@ -30,7 +30,6 @@ DataManager::DataManager() : headlines()
 void DataManager::updateData()
 {
     providerInfo tmpProvider = providers.at(selectedProvider);
-        
     headlines.clear();
     CURLcode res;
     CURL *curl;
@@ -111,9 +110,12 @@ size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb, std:
     return realSize;
 }
 
-
-void DataManager::changeProvider(std::string name)
+std::string DataManager::getSelectedProvider()
 {
+    return selectedProvider;    
+}
 
-
+void DataManager::changeProvider(const std::string &name)
+{
+    selectedProvider = name;
 }
