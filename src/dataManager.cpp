@@ -12,11 +12,23 @@ DataManager::DataManager() : headlines()
     iltalehti.captionBegin = "<description>";
     iltalehti.captionEnd = "</description>";
     providers.insert({iltalehti.name, iltalehti});
+
+    providerInfo iltasanomat;
+    iltasanomat.name = "Iltasanomat";
+    iltasanomat.url = "https://www.is.fi/rss/tuoreimmat.xml";
+    iltasanomat.titleBegin = "<title>";
+    iltasanomat.titleEnd = "</title>";
+    iltasanomat.urlBegin = "<link>";
+    iltasanomat.urlEnd = "</link>";
+    iltasanomat.captionBegin = "<description>";
+    iltasanomat.captionEnd = "</description>";
+    providers.insert({iltasanomat.name, iltasanomat});
+
 }
 
 void DataManager::updateData()
 {
-    std::string testParam = "Iltalehti"; //REMOVE
+    std::string testParam = "Iltasanomat"; //REMOVE
     providerInfo tmpProvider = providers.at(testParam);
         
     headlines.clear();
@@ -97,14 +109,5 @@ size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb, std:
     size_t realSize = size * nmemb;
     userData -> append((char*)content, realSize);
     return realSize;
-}
-
-
-void DataManager::clearTags(std::string &origCaption){
-    // Regular expression to match HTML tags
-    std::regex html_tag_pattern("<[^>]*>");
-    // Replace HTML tags with an empty string
-    origCaption = std::regex_replace(origCaption, html_tag_pattern, ""); 
-
 }
 

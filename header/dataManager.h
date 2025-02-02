@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <regex>
 #include <curl/curlver.h> 
 #include <curl/curl.h>
 #include <unordered_map>
@@ -58,7 +57,6 @@ private:
     std::vector<hl> headlines;
 
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
-    void clearTags(std::string &origCaption);
 };
 
 #endif // datamanager_h
