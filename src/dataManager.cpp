@@ -16,12 +16,12 @@ DataManager::DataManager() : headlines()
     providerInfo iltasanomat;
     iltasanomat.name = "Iltasanomat";
     iltasanomat.url = "https://www.is.fi/rss/tuoreimmat.xml";
-    iltasanomat.titleBegin = "<title>";
-    iltasanomat.titleEnd = "</title>";
+    iltasanomat.titleBegin = "<title><![CDATA[";
+    iltasanomat.titleEnd = "]]></title>";
     iltasanomat.urlBegin = "<link>";
     iltasanomat.urlEnd = "</link>";
-    iltasanomat.captionBegin = "<description>";
-    iltasanomat.captionEnd = "</description>";
+    iltasanomat.captionBegin = "<description><![CDATA[";
+    iltasanomat.captionEnd = "]]></description>";
     providers.insert({iltasanomat.name, iltasanomat});
 
 }
@@ -81,7 +81,7 @@ void DataManager::updateData()
 
             //get caption
             size_t captionStartPos = responseData.find(tmpProvider.captionBegin, lastPos);
-            size_t captionEndPos = responseData.find(tmpProvider.captionEnd, urlStartPos);
+            size_t captionEndPos = responseData.find(tmpProvider.captionEnd, captionStartPos);
             if (captionStartPos == std::string::npos || captionEndPos == std::string::npos) {
                 lastPos = std::string::npos;
                 continue; 
