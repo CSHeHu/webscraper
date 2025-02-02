@@ -4,13 +4,12 @@ DataManager::DataManager() : headlines()
 {
     providerInfo iltalehti;
     iltalehti.name = "Iltalehti";
-    iltalehti.url = "https://www.iltalehti.fi";
-    iltalehti.titleBegin = "class=\"front-title\">";
-    iltalehti.titleEnd = "<";
-    iltalehti.urlBegin = "<a href=\"";
-    iltalehti.urlEnd = "\"";
+    iltalehti.url = "https://www.iltalehti.fi/rss/rss.xml";
+    iltalehti.titleBegin = "<title>";
+    iltalehti.titleEnd = "</title>";
+    iltalehti.urlBegin = "<link>";
+    iltalehti.urlEnd = "</link>";
     providers.insert({iltalehti.name, iltalehti});
-
 }
 
 void DataManager::updateData()
@@ -25,7 +24,6 @@ void DataManager::updateData()
     size_t lastPos = 0;
 
     curl = curl_easy_init();
-
 
     if (curl){
         curl_easy_setopt(curl, CURLOPT_URL, tmpProvider.url);
@@ -45,34 +43,43 @@ void DataManager::updateData()
         // go trough response and save every headline to vector
         while ( lastPos != std::string::npos){
             lastPos = responseData.find(tmpProvider.titleBegin, lastPos);
-
             if (lastPos == std::string::npos){
                 continue;
             }   
 
             // find headlines
             size_t titleEndPos = responseData.find(tmpProvider.titleEnd, lastPos);
-            std::string hlTemp = responseData.substr(lastPos + tmpProvider.titleBegin.size(), titleEndPos - (lastPos + tmpProvider.titleBegin.size()));
-            
+            if (titleEndPos == std::string::npos) {
+                lastPos = std::string::npos;
+                continue;
+            }
+            std::string hlTemp = responseData.substr(lastPos + tmpProvider.titleBegin.size(), titleEndPos - lastPos - tmpProvider.titleBegin.size());
+        
+
             // search for headline url
-            size_t urlStartPos = responseData.rfind(tmpProvider.urlBegin, lastPos);
-            size_t urlEndPos = responseData.find(tmpProvider.urlEnd, urlStartPos + tmpProvider.urlBegin.size());
-            std::string hlUrlTemp = tmpProvider.url + responseData.substr(urlStartPos + tmpProvider.urlBegin.size(), urlEndPos - (urlStartPos + tmpProvider.urlBegin.size()));
+            size_t urlStartPos = responseData.find(tmpProvider.urlBegin, lastPos);
+            size_t urlEndPos = responseData.find(tmpProvider.urlEnd, urlStartPos);
+            if (urlStartPos == std::string::npos || urlEndPos == std::string::npos) {
+                lastPos = std::string::npos;
+                continue; 
+            }
+            std::string hlUrlTemp = responseData.substr(urlStartPos + tmpProvider.urlBegin.size(), urlEndPos - urlStartPos - tmpProvider.urlBegin.size());
 
             //get caption
-            std::string hlCaptionTemp = updateCaption(hlUrlTemp.c_str());
+            //std::string hlCaptionTemp = updateCaption(hlUrlTemp.c_str());
 
-            hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
+            //hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
+            hl tmpHeadline = {hlTemp, hlUrlTemp};
             headlines.push_back(tmpHeadline);
             
             lastPos += tmpProvider.titleBegin.size();
-            
+            std::cout << hlTemp << " : " << hlUrlTemp << std::endl;            
     }
-    
     curl_easy_cleanup(curl);
     curl = NULL;
     }
 }
+
 
 std::vector<DataManager::hl> DataManager::getHeadlines()
 {
