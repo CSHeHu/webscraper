@@ -51,12 +51,13 @@ private:
         std::string titleEnd; 
         std::string urlBegin;
         std::string urlEnd;
+        std::string captionBegin; 
+        std::string captionEnd;
     };
     std::unordered_map<std::string, providerInfo> providers;
     std::vector<hl> headlines;
 
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
-    std::string updateCaption(const char* headlineURL);
     void clearTags(std::string &origCaption);
 };
 

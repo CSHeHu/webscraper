@@ -10,9 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     this->setWindowTitle("Uutiset");
     
-    data->updateData();
-    //createGui();
-    //updateData();
+    createGui();
+    updateData();
 }
 
 MainWindow::~MainWindow()

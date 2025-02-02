@@ -9,6 +9,8 @@ DataManager::DataManager() : headlines()
     iltalehti.titleEnd = "</title>";
     iltalehti.urlBegin = "<link>";
     iltalehti.urlEnd = "</link>";
+    iltalehti.captionBegin = "<description>";
+    iltalehti.captionEnd = "</description>";
     providers.insert({iltalehti.name, iltalehti});
 }
 
@@ -66,14 +68,19 @@ void DataManager::updateData()
             std::string hlUrlTemp = responseData.substr(urlStartPos + tmpProvider.urlBegin.size(), urlEndPos - urlStartPos - tmpProvider.urlBegin.size());
 
             //get caption
-            //std::string hlCaptionTemp = updateCaption(hlUrlTemp.c_str());
+            size_t captionStartPos = responseData.find(tmpProvider.captionBegin, lastPos);
+            size_t captionEndPos = responseData.find(tmpProvider.captionEnd, urlStartPos);
+            if (captionStartPos == std::string::npos || captionEndPos == std::string::npos) {
+                lastPos = std::string::npos;
+                continue; 
+            }
+            std::string hlCaptionTemp = responseData.substr(captionStartPos + tmpProvider.captionBegin.size(), captionEndPos - captionStartPos- tmpProvider.captionBegin.size());
 
-            //hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
-            hl tmpHeadline = {hlTemp, hlUrlTemp};
+
+            hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
             headlines.push_back(tmpHeadline);
             
             lastPos += tmpProvider.titleBegin.size();
-            std::cout << hlTemp << " : " << hlUrlTemp << std::endl;            
     }
     curl_easy_cleanup(curl);
     curl = NULL;
@@ -92,59 +99,6 @@ size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb, std:
     return realSize;
 }
 
-std::string DataManager::updateCaption(const char* headlineURL)
-{
-    
-    CURLcode res;
-    CURL *curl;
-    std::string responseData;
-    std::string hlTemp = "";
-
-    // sw and lastchar for headlinesearch, url for destination
-    const char* url = headlineURL;
-    std::string titleBegin = "itemProp=\"articleBody\"><p class=\"paragraph\">";
-    std::string titleEnd = "</div>";
-    size_t lastPos = 0;
-
-    curl = curl_easy_init();
-if (curl){
-
-
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseData); 
-        
-        res = curl_easy_perform(curl);
-
-        // validate response
-        if (res != CURLE_OK) {
-            std::cerr << "CURL error: " << curl_easy_strerror(res) << std::endl;
-            curl_easy_cleanup(curl);
-            curl = NULL;
-            return hlTemp;
-        }
-        
-        lastPos = responseData.find(titleBegin, lastPos);
-
-        if (lastPos == std::string::npos){
-            curl_easy_cleanup(curl);
-            curl = NULL;
-            return hlTemp;
-        }   
-
-        // find caption
-        size_t titleEndPos = responseData.find(titleEnd, lastPos);
-        hlTemp = responseData.substr(lastPos + titleBegin.size(), titleEndPos - (lastPos + titleBegin.size()));
-        
-    }    
-    
-    
-    curl_easy_cleanup(curl);
-    curl = NULL;
-    clearTags(hlTemp);
-
-    return hlTemp;
-}
 
 void DataManager::clearTags(std::string &origCaption){
     // Regular expression to match HTML tags
