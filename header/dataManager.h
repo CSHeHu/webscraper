@@ -9,41 +9,50 @@
 #include <unordered_map>
 
 /**
- * @brief A class to manage data fetching and processing.
- * 
- * This class handles retrieving data from the web using CURL and
- * processing it to extract headlines and their URLs.
+ * @brief Manages data fetching and headline extraction.
  */
 class DataManager {
 public:
     /**
- * @brief Struct to represent a headline and its associated URL.
- */
-
+     * @brief Represents a headline with its URL and caption.
+     */
     struct hl {
         std::string headline;    
         std::string headlineUrl;
         std::string headlineCaption;
     };
+
+    /**
+     * @brief Default constructor to initialize the DataManager.
+     */
     DataManager();
+
+    /**
+     * @brief Fetches and updates the latest data.
+     * 
+     * This method retrieves headlines, URLs, and captions from the selected provider.
+     */
     void updateData();
+
+    /**
+     * @brief Gets the list of extracted headlines.
+     * 
+     * @return A vector containing all the headlines, URLs, and captions.
+     */
     std::vector<hl> getHeadlines();
+
+    /**
+     * @brief Changes the provider to fetch data from.
+     * 
+     * @param name The name of the provider to switch to.
+     */
     void changeProvider(std::string name);
 
 private:
     /**
-     * @brief Callback function for handling CURL data writes.
-     * 
-     * This function appends the data received by CURL to a user-provided string.
-     * 
-     * @param content Pointer to the received data.
-     * @param size Size of each data element.
-     * @param nmemb Number of data elements.
-     * @param userData Pointer to the user-provided string where data will be appended.
-     * @return The total number of bytes written.
+     * @brief Holds provider details for fetching data.
      */
-
-    struct providerInfo{
+    struct providerInfo {
         std::string name;
         const char* url; 
         std::string titleBegin;
@@ -53,11 +62,21 @@ private:
         std::string captionBegin; 
         std::string captionEnd;
     };
+
     std::unordered_map<std::string, providerInfo> providers;
     std::vector<hl> headlines;
-    std::string selectedProvider; 
+    std::string selectedProvider;
 
+    /**
+     * @brief Appends received data to a string.
+     * 
+     * @param content Pointer to the received data.
+     * @param size Size of each data element.
+     * @param nmemb Number of data elements.
+     * @param userData Pointer to the string where data will be appended.
+     * @return The total number of bytes written.
+     */
     static size_t writeCallback(char *content, size_t size, size_t nmemb, std::string* userData);
 };
 
-#endif // datamanager_h
+#endif // DATAMANAGER_H
