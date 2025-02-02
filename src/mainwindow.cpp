@@ -84,25 +84,25 @@ void MainWindow::createGui()
     // Create toolbar actions 
     QAction *updateAction = new QAction("Update", this);
     connect(updateAction, &QAction::triggered, this, &MainWindow::updateData);
-    toolBar->addAction(updateAction); // Add action to toolbar
+    toolBar->addAction(updateAction);
 
     QAction *quitAction = new QAction("Quit", this);
     connect(quitAction, &QAction::triggered, QCoreApplication::quit);
-    toolBar->addAction(quitAction); // Add action to toolbar    
+    toolBar->addAction(quitAction);
     
     QAction *is = new QAction("Iltasanomat", this);
     connect(is, &QAction::triggered,this, [this]() {
         data->changeProvider("Iltasanomat");
         updateData();     
     });
-    toolBar->addAction(is); // Add action to toolbar    
+    toolBar->addAction(is);
     
     QAction *il = new QAction("Iltalehti", this);
     connect(il, &QAction::triggered,this, [this]() {
         data->changeProvider("Iltalehti");
         updateData();     
     });
-    toolBar->addAction(il); // Add action to toolbar    
+    toolBar->addAction(il); 
 }
 
 void MainWindow::updateData()
@@ -116,30 +116,24 @@ void MainWindow::updateData()
     }
     
     data->updateData();
-
-
-    // Fetch headlines from DataManager
-    std::vector<DataManager::hl> headlines = data->getHeadlines();
+    std::vector<DataManager::hl>* headlines = data->getHeadlines();
 
     // Create buttons for each headline
-    for (const auto &headline : headlines) {
+    for (const auto &headline : *headlines) {
 
-        // skipping empty headlines if any
         if (headline.headline.size() == 0){
             continue;
         }
 
         QPushButton *button = new QPushButton(QString::fromStdString(headline.headline), centralWidget);
-        button->setProperty("url", QString::fromStdString(headline.headlineUrl)); // Store URL as property
+        button->setProperty("url", QString::fromStdString(headline.headlineUrl)); 
         connect(button, &QPushButton::clicked, this, &MainWindow::openUrl);
         
-        button->setProperty("caption", QString::fromStdString(headline.headlineCaption)); //store caption as property
+        button->setProperty("caption", QString::fromStdString(headline.headlineCaption));
 
         button->installEventFilter(this);
-        buttonLayout->addWidget(button); // Add button to the layout
+        buttonLayout->addWidget(button);
     }
-
-
 }
 
 void MainWindow::openUrl()

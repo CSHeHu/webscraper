@@ -99,9 +99,9 @@ void DataManager::updateData()
 }
 
 
-std::vector<DataManager::hl> DataManager::getHeadlines()
+std::vector<DataManager::hl>* DataManager::getHeadlines()
 {
-    return headlines;
+    return &headlines;
 }
 
 size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb, std::string* userData){
@@ -110,10 +110,6 @@ size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb, std:
     return realSize;
 }
 
-std::string DataManager::getSelectedProvider()
-{
-    return selectedProvider;    
-}
 
 void DataManager::changeProvider(const std::string &name)
 {

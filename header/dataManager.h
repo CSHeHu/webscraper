@@ -39,7 +39,7 @@ public:
      * 
      * @return A vector containing all the headlines, URLs, and captions.
      */
-    std::vector<hl> getHeadlines();
+    std::vector<hl>* getHeadlines();
 
     /**
      * @brief Changes the provider to fetch data from.
@@ -48,7 +48,6 @@ public:
      */
     void changeProvider(const std::string &name);
 
-    std::string getSelectedProvider();
 private:
     /**
      * @brief Holds provider details for fetching data.
