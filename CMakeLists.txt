@@ -13,10 +13,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# Path to your Qt installation
-set(CMAKE_PREFIX_PATH "~/Qt/6.8.1/gcc_64")
-
-
 # Find packages package
 find_package(CURL REQUIRED)  
 find_package(Qt6 COMPONENTS Widgets WebEngineWidgets REQUIRED)
