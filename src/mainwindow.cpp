@@ -140,41 +140,15 @@ void MainWindow::updateGui() {
 }
 
 void MainWindow::openUrl() {
-  // Get the sender button
   QPushButton *button = qobject_cast<QPushButton *>(sender());
   if (button) {
-    // Retrieve the URL from the button property
     QString url = button->property("url").toString();
-    QDesktopServices::openUrl(QUrl(url)); // Open the URL in the default browser
+    QDesktopServices::openUrl(QUrl(url));
   }
 }
 
 void MainWindow::search() {
   QString searchText = searchLineEdit->text().trimmed();
-
   data->updateData(searchText.toStdString());
-
-  while (QLayoutItem *item = buttonLayout->takeAt(0)) {
-    if (QWidget *widget = item->widget())
-      widget->deleteLater();
-    delete item;
-  }
-
-  auto headlines = data->getHeadlines();
-
-  for (const auto &headline : *headlines) {
-    QPushButton *button = new QPushButton(
-        QString::fromStdString(headline.headline), centralWidget);
-
-    button->setProperty("url", QString::fromStdString(headline.headlineUrl));
-
-    button->setProperty("caption",
-                        QString::fromStdString(headline.headlineCaption));
-
-    connect(button, &QPushButton::clicked, this, &MainWindow::openUrl);
-
-    button->installEventFilter(this);
-
-    buttonLayout->addWidget(button);
-  }
+  updateGui();
 }
