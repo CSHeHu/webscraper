@@ -122,13 +122,23 @@ void DataManager::changeProvider(const std::string &name) {
 }
 
 void DataManager::filterHeadlines(const std::string &filterString) {
-
+  std::string lowerFilterString = toLowerHeadline(filterString);
   std::vector<hl> filteredHeadlines;
+
   for (const auto &headline : headlines) {
-    if (headline.headline.find(filterString) != std::string::npos ||
-        headline.headlineCaption.find(filterString) != std::string::npos) {
+    std::string lowerHeadline = toLowerHeadline(headline.headline);
+    std::string lowerheadlineCaption =
+        toLowerHeadline(headline.headlineCaption);
+    if (lowerHeadline.find(lowerFilterString) != std::string::npos ||
+        lowerheadlineCaption.find(lowerFilterString) != std::string::npos) {
       filteredHeadlines.push_back(headline);
     }
   }
   headlines = filteredHeadlines;
+}
+
+std::string DataManager::toLowerHeadline(std::string str) {
+  std::transform(str.begin(), str.end(), str.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+  return str;
 }

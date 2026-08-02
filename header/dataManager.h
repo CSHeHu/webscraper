@@ -79,6 +79,7 @@ private:
    */
   static size_t writeCallback(char *content, size_t size, size_t nmemb,
                               std::string *userData);
+  std::string toLowerHeadline(std::string str);
 };
 
 #endif // DATAMANAGER_H
