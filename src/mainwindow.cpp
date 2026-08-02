@@ -9,7 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
   this->setWindowTitle("Uutiset");
 
   createGui();
-  updateData();
+  data->updateData();
+  updateGui();
 }
 
 MainWindow::~MainWindow() { delete data; }
@@ -71,7 +72,11 @@ void MainWindow::createGui() {
 
   // Create toolbar actions
   QAction *updateAction = new QAction("Update", this);
-  connect(updateAction, &QAction::triggered, this, &MainWindow::updateData);
+  connect(updateAction, &QAction::triggered, this, [this]() {
+    data->updateData();
+    updateGui();
+  });
+
   toolBar->addAction(updateAction);
 
   QAction *quitAction = new QAction("Quit", this);
@@ -81,14 +86,16 @@ void MainWindow::createGui() {
   QAction *is = new QAction("Iltasanomat", this);
   connect(is, &QAction::triggered, this, [this]() {
     data->changeProvider("Iltasanomat");
-    updateData();
+    data->updateData();
+    updateGui();
   });
   toolBar->addAction(is);
 
   QAction *il = new QAction("Iltalehti", this);
   connect(il, &QAction::triggered, this, [this]() {
     data->changeProvider("Iltalehti");
-    updateData();
+    data->updateData();
+    updateGui();
   });
   toolBar->addAction(il);
 
@@ -101,7 +108,7 @@ void MainWindow::createGui() {
   toolBar->addAction(searchAction);
 }
 
-void MainWindow::updateData() {
+void MainWindow::updateGui() {
 
   while (QLayoutItem *item = buttonLayout->takeAt(0)) {
     if (QWidget *widget = item->widget()) {
@@ -110,7 +117,6 @@ void MainWindow::updateData() {
     delete item;
   }
 
-  data->updateData();
   std::vector<DataManager::hl> *headlines = data->getHeadlines();
 
   // Create buttons for each headline

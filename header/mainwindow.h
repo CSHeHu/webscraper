@@ -36,7 +36,7 @@ private:
   QLineEdit *searchLineEdit;
 
   void createGui();
-  void updateData();
+  void updateGui();
   void search();
 };
 #endif // MAINWINDOW_H
