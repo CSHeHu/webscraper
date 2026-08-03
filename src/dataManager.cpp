@@ -44,7 +44,6 @@ void DataManager::updateData(const std::string &filterString) {
 
     res = curl_easy_perform(curl);
 
-    // validate response
     if (res != CURLE_OK) {
       std::cerr << "CURL error: " << curl_easy_strerror(res) << std::endl;
       curl_easy_cleanup(curl);
@@ -52,14 +51,12 @@ void DataManager::updateData(const std::string &filterString) {
       return;
     }
 
-    // go trough response and save every headline to vector
     while (lastPos != std::string::npos) {
       lastPos = responseData.find(tmpProvider.titleBegin, lastPos);
       if (lastPos == std::string::npos) {
         continue;
       }
 
-      // find headlines
       size_t titleEndPos = responseData.find(tmpProvider.titleEnd, lastPos);
       if (titleEndPos == std::string::npos) {
         lastPos = std::string::npos;
@@ -69,7 +66,6 @@ void DataManager::updateData(const std::string &filterString) {
           lastPos + tmpProvider.titleBegin.size(),
           titleEndPos - lastPos - tmpProvider.titleBegin.size());
 
-      // search for headline url
       size_t urlStartPos = responseData.find(tmpProvider.urlBegin, lastPos);
       size_t urlEndPos = responseData.find(tmpProvider.urlEnd, urlStartPos);
       if (urlStartPos == std::string::npos || urlEndPos == std::string::npos) {
@@ -80,7 +76,6 @@ void DataManager::updateData(const std::string &filterString) {
           urlStartPos + tmpProvider.urlBegin.size(),
           urlEndPos - urlStartPos - tmpProvider.urlBegin.size());
 
-      // get caption
       size_t captionStartPos =
           responseData.find(tmpProvider.captionBegin, lastPos);
       size_t captionEndPos =
