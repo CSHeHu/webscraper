@@ -28,9 +28,9 @@ private slots:
   void openUrl();
 
 private:
-  QVBoxLayout *buttonLayout; // Layout to hold buttons
-  QWidget *centralWidget;    // Central widget for the layout
-  DataManager *data;         // Instance of DataManager to fetch headlines
+  QVBoxLayout *buttonLayout;
+  QWidget *centralWidget;
+  DataManager *data;
   QToolBar *toolBar;
   QLabel *newsInfoLabel;
   QLineEdit *searchLineEdit;

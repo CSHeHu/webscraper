@@ -103,9 +103,16 @@ void MainWindow::createGui() {
   searchLineEdit->setPlaceholderText("Search...");
   toolBar->addWidget(searchLineEdit);
 
+  auto doSearch = [this]() {
+    search();
+    searchLineEdit->clear();
+  };
+
   QAction *searchAction = new QAction("Search", this);
-  connect(searchAction, &QAction::triggered, this, &MainWindow::search);
+  connect(searchAction, &QAction::triggered, this, doSearch);
   toolBar->addAction(searchAction);
+
+  connect(searchLineEdit, &QLineEdit::returnPressed, this, doSearch);
 }
 
 void MainWindow::updateGui() {
