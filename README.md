@@ -2,6 +2,8 @@
 
 Qt desktop app for reading news headlines from RSS feeds.
 
+![Screenshot](docs/screenshot.png)
+
 ## Requirements
 
 - Qt 6.8.1
