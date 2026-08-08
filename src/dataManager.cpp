@@ -1,6 +1,11 @@
 #include "dataManager.h"
+#include <QNetworkRequest>
+#include <QUrl>
+#include <algorithm>
 
-DataManager::DataManager() : headlines() {
+DataManager::DataManager(QObject *parent)
+    : QObject(parent), headlines(),
+      networkManager(new QNetworkAccessManager(this)) {
   providerInfo iltalehti;
   iltalehti.name = "Iltalehti";
   iltalehti.url = "https://www.iltalehti.fi/rss/rss.xml";
@@ -27,90 +32,96 @@ DataManager::DataManager() : headlines() {
 }
 
 void DataManager::updateData(const std::string &filterString) {
+  if (currentReply) {
+    currentReply->abort();
+  }
+
   providerInfo tmpProvider = providers.at(selectedProvider);
   headlines.clear();
-  CURLcode res;
-  CURL *curl;
-  std::string responseData;
+  pendingFilter = filterString;
+
+  QNetworkRequest request(
+      QUrl(QString::fromStdString(tmpProvider.url)));
+  currentReply = networkManager->get(request);
+  connect(currentReply, &QNetworkReply::finished, this,
+          &DataManager::onReplyFinished);
+}
+
+void DataManager::onReplyFinished() {
+  QNetworkReply *reply = currentReply;
+  currentReply = nullptr;
+
+  if (reply->error() != QNetworkReply::NoError) {
+    QString errorMessage = reply->errorString();
+    reply->deleteLater();
+    if (reply->error() != QNetworkReply::OperationCanceledError) {
+      emit fetchFailed(errorMessage);
+    }
+    return;
+  }
+
+  std::string responseData = reply->readAll().toStdString();
+  reply->deleteLater();
+
+  parseResponse(responseData);
+
+  if (!pendingFilter.empty()) {
+    filterHeadlines(pendingFilter);
+  }
+
+  emit headlinesReady();
+}
+
+void DataManager::parseResponse(const std::string &responseData) {
+  providerInfo tmpProvider = providers.at(selectedProvider);
   size_t lastPos = 0;
-  const std::string &filter = filterString;
 
-  curl = curl_easy_init();
-
-  if (curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, tmpProvider.url);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseData);
-
-    res = curl_easy_perform(curl);
-
-    if (res != CURLE_OK) {
-      std::cerr << "CURL error: " << curl_easy_strerror(res) << std::endl;
-      curl_easy_cleanup(curl);
-      curl = NULL;
-      return;
+  while (lastPos != std::string::npos) {
+    lastPos = responseData.find(tmpProvider.titleBegin, lastPos);
+    if (lastPos == std::string::npos) {
+      continue;
     }
 
-    while (lastPos != std::string::npos) {
-      lastPos = responseData.find(tmpProvider.titleBegin, lastPos);
-      if (lastPos == std::string::npos) {
-        continue;
-      }
-
-      size_t titleEndPos = responseData.find(tmpProvider.titleEnd, lastPos);
-      if (titleEndPos == std::string::npos) {
-        lastPos = std::string::npos;
-        continue;
-      }
-      std::string hlTemp = responseData.substr(
-          lastPos + tmpProvider.titleBegin.size(),
-          titleEndPos - lastPos - tmpProvider.titleBegin.size());
-
-      size_t urlStartPos = responseData.find(tmpProvider.urlBegin, lastPos);
-      size_t urlEndPos = responseData.find(tmpProvider.urlEnd, urlStartPos);
-      if (urlStartPos == std::string::npos || urlEndPos == std::string::npos) {
-        lastPos = std::string::npos;
-        continue;
-      }
-      std::string hlUrlTemp = responseData.substr(
-          urlStartPos + tmpProvider.urlBegin.size(),
-          urlEndPos - urlStartPos - tmpProvider.urlBegin.size());
-
-      size_t captionStartPos =
-          responseData.find(tmpProvider.captionBegin, lastPos);
-      size_t captionEndPos =
-          responseData.find(tmpProvider.captionEnd, captionStartPos);
-      if (captionStartPos == std::string::npos ||
-          captionEndPos == std::string::npos) {
-        lastPos = std::string::npos;
-        continue;
-      }
-      std::string hlCaptionTemp = responseData.substr(
-          captionStartPos + tmpProvider.captionBegin.size(),
-          captionEndPos - captionStartPos - tmpProvider.captionBegin.size());
-
-      hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
-      headlines.push_back(tmpHeadline);
-
-      lastPos += tmpProvider.titleBegin.size();
+    size_t titleEndPos = responseData.find(tmpProvider.titleEnd, lastPos);
+    if (titleEndPos == std::string::npos) {
+      lastPos = std::string::npos;
+      continue;
     }
-    curl_easy_cleanup(curl);
-    curl = NULL;
+    std::string hlTemp = responseData.substr(
+        lastPos + tmpProvider.titleBegin.size(),
+        titleEndPos - lastPos - tmpProvider.titleBegin.size());
 
-    if (!filterString.empty()) {
-      filterHeadlines(filterString);
+    size_t urlStartPos = responseData.find(tmpProvider.urlBegin, lastPos);
+    size_t urlEndPos = responseData.find(tmpProvider.urlEnd, urlStartPos);
+    if (urlStartPos == std::string::npos || urlEndPos == std::string::npos) {
+      lastPos = std::string::npos;
+      continue;
     }
+    std::string hlUrlTemp = responseData.substr(
+        urlStartPos + tmpProvider.urlBegin.size(),
+        urlEndPos - urlStartPos - tmpProvider.urlBegin.size());
+
+    size_t captionStartPos =
+        responseData.find(tmpProvider.captionBegin, lastPos);
+    size_t captionEndPos =
+        responseData.find(tmpProvider.captionEnd, captionStartPos);
+    if (captionStartPos == std::string::npos ||
+        captionEndPos == std::string::npos) {
+      lastPos = std::string::npos;
+      continue;
+    }
+    std::string hlCaptionTemp = responseData.substr(
+        captionStartPos + tmpProvider.captionBegin.size(),
+        captionEndPos - captionStartPos - tmpProvider.captionBegin.size());
+
+    hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
+    headlines.push_back(tmpHeadline);
+
+    lastPos += tmpProvider.titleBegin.size();
   }
 }
 
 std::vector<DataManager::hl> *DataManager::getHeadlines() { return &headlines; }
-
-size_t DataManager::writeCallback(char *content, size_t size, size_t nmemb,
-                                  std::string *userData) {
-  size_t realSize = size * nmemb;
-  userData->append((char *)content, realSize);
-  return realSize;
-}
 
 void DataManager::changeProvider(const std::string &name) {
   selectedProvider = name;

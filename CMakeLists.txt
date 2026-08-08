@@ -12,8 +12,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(CURL REQUIRED)
-find_package(Qt6 COMPONENTS Widgets WebEngineWidgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets WebEngineWidgets Network REQUIRED)
 
 set(SRC_FILES
     src/dataManager.cpp
@@ -36,9 +35,8 @@ target_include_directories(webscraper
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/header
     ${CMAKE_BINARY_DIR}
-    ${CURL_INCLUDE_DIRS}
 )
 
-target_link_libraries(webscraper PRIVATE CURL::libcurl Qt6::Widgets Qt6::WebEngineWidgets)
+target_link_libraries(webscraper PRIVATE Qt6::Widgets Qt6::WebEngineWidgets Qt6::Network)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

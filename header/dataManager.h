@@ -1,14 +1,16 @@
 #ifndef DATAMANAGER_H
 #define DATAMANAGER_H
 
-#include <curl/curl.h>
-#include <curl/curlver.h>
-#include <iostream>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QObject>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-class DataManager {
+class DataManager : public QObject {
+  Q_OBJECT
+
 public:
   struct hl {
     std::string headline;
@@ -16,7 +18,7 @@ public:
     std::string headlineCaption;
   };
 
-  DataManager();
+  DataManager(QObject *parent = nullptr);
 
   void updateData(const std::string &filterString = "");
 
@@ -25,10 +27,17 @@ public:
   void changeProvider(const std::string &name);
   void filterHeadlines(const std::string &filterString);
 
+signals:
+  void headlinesReady();
+  void fetchFailed(const QString &message);
+
+private slots:
+  void onReplyFinished();
+
 private:
   struct providerInfo {
     std::string name;
-    const char *url;
+    std::string url;
     std::string titleBegin;
     std::string titleEnd;
     std::string urlBegin;
@@ -40,8 +49,10 @@ private:
   std::unordered_map<std::string, providerInfo> providers;
   std::vector<hl> headlines;
   std::string selectedProvider;
-  static size_t writeCallback(char *content, size_t size, size_t nmemb,
-                              std::string *userData);
+  std::string pendingFilter;
+  QNetworkAccessManager *networkManager;
+  QNetworkReply *currentReply = nullptr;
+  void parseResponse(const std::string &responseData);
   std::string toLowerHeadline(std::string str);
 };
 

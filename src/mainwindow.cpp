@@ -3,17 +3,19 @@
 #include <qlabel.h>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), data(new DataManager)
+    : QMainWindow(parent), data(new DataManager(this))
 
 {
   this->setWindowTitle("Uutiset");
 
   createGui();
+  connect(data, &DataManager::headlinesReady, this, &MainWindow::updateGui);
+  connect(data, &DataManager::fetchFailed, this,
+          [this](const QString &message) { newsInfoLabel->setText(message); });
   data->updateData();
-  updateGui();
 }
 
-MainWindow::~MainWindow() { delete data; }
+MainWindow::~MainWindow() {}
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
   QPushButton *button = qobject_cast<QPushButton *>(obj);
@@ -60,10 +62,8 @@ void MainWindow::createGui() {
   toolBar = addToolBar(tr("Menu"));
 
   QAction *updateAction = new QAction("Update", this);
-  connect(updateAction, &QAction::triggered, this, [this]() {
-    data->updateData();
-    updateGui();
-  });
+  connect(updateAction, &QAction::triggered, this,
+          [this]() { data->updateData(); });
 
   toolBar->addAction(updateAction);
 
@@ -75,7 +75,6 @@ void MainWindow::createGui() {
   connect(is, &QAction::triggered, this, [this]() {
     data->changeProvider("Iltasanomat");
     data->updateData();
-    updateGui();
   });
   toolBar->addAction(is);
 
@@ -83,7 +82,6 @@ void MainWindow::createGui() {
   connect(il, &QAction::triggered, this, [this]() {
     data->changeProvider("Iltalehti");
     data->updateData();
-    updateGui();
   });
   toolBar->addAction(il);
 
@@ -142,5 +140,4 @@ void MainWindow::openUrl() {
 void MainWindow::search() {
   QString searchText = searchLineEdit->text().trimmed();
   data->updateData(searchText.toStdString());
-  updateGui();
 }
