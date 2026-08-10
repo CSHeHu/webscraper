@@ -34,9 +34,12 @@ private:
   QToolBar *toolBar;
   QLabel *newsInfoLabel;
   QLineEdit *searchLineEdit;
+  QPalette lightPalette;
+  QPalette darkPalette;
 
   void createGui();
   void updateGui();
   void search();
+  void toggleTheme();
 };
 #endif // MAINWINDOW_H

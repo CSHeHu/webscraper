@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "dataManager.h"
+#include <QApplication>
 #include <qlabel.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,6 +14,23 @@ MainWindow::MainWindow(QWidget *parent)
   connect(data, &DataManager::fetchFailed, this,
           [this](const QString &message) { newsInfoLabel->setText(message); });
   data->updateData();
+
+  QApplication *a = qApp;
+  lightPalette = a->palette();
+
+  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::WindowText, Qt::white);
+  darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+  darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+  darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+  darkPalette.setColor(QPalette::Text, Qt::white);
+  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::ButtonText, Qt::white);
+  darkPalette.setColor(QPalette::BrightText, Qt::red);
+  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 }
 
 MainWindow::~MainWindow() {}
@@ -99,6 +117,11 @@ void MainWindow::createGui() {
   toolBar->addAction(searchAction);
 
   connect(searchLineEdit, &QLineEdit::returnPressed, this, doSearch);
+
+  QAction *toggleThemeAction = new QAction("Toggle Theme", this);
+  connect(toggleThemeAction, &QAction::triggered, this,
+          &MainWindow::toggleTheme);
+  toolBar->addAction(toggleThemeAction);
 }
 
 void MainWindow::updateGui() {
@@ -140,4 +163,10 @@ void MainWindow::openUrl() {
 void MainWindow::search() {
   QString searchText = searchLineEdit->text().trimmed();
   data->updateData(searchText.toStdString());
+}
+
+void MainWindow::toggleTheme() {
+  QApplication *a = qApp;
+  (a->palette() == lightPalette) ? a->setPalette(darkPalette)
+                                 : a->setPalette(lightPalette);
 }
