@@ -1,34 +1,23 @@
 #include "dataManager.h"
+#include <QCoreApplication>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
 #include <QNetworkRequest>
 #include <QUrl>
 #include <algorithm>
 
+const std::string CONFIGFILE = "/config/config.json";
+
 DataManager::DataManager(QObject *parent)
     : QObject(parent), headlines(),
       networkManager(new QNetworkAccessManager(this)) {
-  providerInfo iltalehti;
-  iltalehti.name = "Iltalehti";
-  iltalehti.url = "https://www.iltalehti.fi/rss/rss.xml";
-  iltalehti.titleBegin = "<title>";
-  iltalehti.titleEnd = "</title>";
-  iltalehti.urlBegin = "<link>";
-  iltalehti.urlEnd = "</link>";
-  iltalehti.captionBegin = "<description>";
-  iltalehti.captionEnd = "</description>";
-  providers.insert({iltalehti.name, iltalehti});
-
-  providerInfo iltasanomat;
-  iltasanomat.name = "Iltasanomat";
-  iltasanomat.url = "https://www.is.fi/rss/tuoreimmat.xml";
-  iltasanomat.titleBegin = "<title><![CDATA[";
-  iltasanomat.titleEnd = "]]></title>";
-  iltasanomat.urlBegin = "<link>";
-  iltasanomat.urlEnd = "</link>";
-  iltasanomat.captionBegin = "<description><![CDATA[";
-  iltasanomat.captionEnd = "]]></description>";
-  providers.insert({iltasanomat.name, iltasanomat});
-
-  selectedProvider = iltalehti.name;
+  readConfigFile();
+  if (!providers.empty()) {
+    selectedProvider = providers.begin()->first;
+  }
 }
 
 void DataManager::updateData(const std::string &filterString) {
@@ -40,8 +29,7 @@ void DataManager::updateData(const std::string &filterString) {
   headlines.clear();
   pendingFilter = filterString;
 
-  QNetworkRequest request(
-      QUrl(QString::fromStdString(tmpProvider.url)));
+  QNetworkRequest request(QUrl(QString::fromStdString(tmpProvider.url)));
   currentReply = networkManager->get(request);
   connect(currentReply, &QNetworkReply::finished, this,
           &DataManager::onReplyFinished);
@@ -147,4 +135,47 @@ std::string DataManager::toLowerHeadline(std::string str) {
   std::transform(str.begin(), str.end(), str.begin(),
                  [](unsigned char c) { return std::tolower(c); });
   return str;
+}
+
+void DataManager::readConfigFile() {
+  QFile configFile(QCoreApplication::applicationDirPath() +
+                    QString::fromStdString(CONFIGFILE));
+  if (!configFile.open(QIODevice::ReadOnly)) {
+    return;
+  }
+
+  QByteArray fileData = configFile.readAll();
+  configFile.close();
+
+  QJsonParseError parseError;
+  QJsonDocument doc = QJsonDocument::fromJson(fileData, &parseError);
+  if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+    return;
+  }
+
+  std::unordered_map<std::string, providerInfo> loadedProviders;
+
+  for (const QJsonValue &entry : doc.array()) {
+    QJsonObject obj = entry.toObject();
+
+    providerInfo provider;
+    provider.name = obj.value("name").toString().toStdString();
+    provider.url = obj.value("url").toString().toStdString();
+    provider.titleBegin = obj.value("titleBegin").toString().toStdString();
+    provider.titleEnd = obj.value("titleEnd").toString().toStdString();
+    provider.urlBegin = obj.value("urlBegin").toString().toStdString();
+    provider.urlEnd = obj.value("urlEnd").toString().toStdString();
+    provider.captionBegin = obj.value("captionBegin").toString().toStdString();
+    provider.captionEnd = obj.value("captionEnd").toString().toStdString();
+
+    if (provider.name.empty() || provider.url.empty()) {
+      continue;
+    }
+
+    loadedProviders.insert({provider.name, provider});
+  }
+
+  if (!loadedProviders.empty()) {
+    providers = loadedProviders;
+  }
 }

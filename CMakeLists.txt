@@ -40,3 +40,8 @@ target_include_directories(webscraper
 target_link_libraries(webscraper PRIVATE Qt6::Widgets Qt6::WebEngineWidgets Qt6::Network)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+add_custom_command(TARGET webscraper POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/config $<TARGET_FILE_DIR:webscraper>/config
+)

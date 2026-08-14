@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Iltalehti",
+    "url": "https://www.iltalehti.fi/rss/rss.xml",
+    "titleBegin": "<title>",
+    "titleEnd": "</title>",
+    "urlBegin": "<link>",
+    "urlEnd": "</link>",
+    "captionBegin": "<description>",
+    "captionEnd": "</description>"
+  },
+  {
+    "name": "Iltasanomat",
+    "url": "https://www.is.fi/rss/tuoreimmat.xml",
+    "titleBegin": "<title><![CDATA[",
+    "titleEnd": "]]></title>",
+    "urlBegin": "<link>",
+    "urlEnd": "</link>",
+    "captionBegin": "<description><![CDATA[",
+    "captionEnd": "]]></description>"
+  }
+]

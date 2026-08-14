@@ -53,6 +53,7 @@ private:
   QNetworkAccessManager *networkManager;
   QNetworkReply *currentReply = nullptr;
   void parseResponse(const std::string &responseData);
+  void readConfigFile();
   std::string toLowerHeadline(std::string str);
 };
 
