@@ -18,5 +18,15 @@
     "urlEnd": "</link>",
     "captionBegin": "<description><![CDATA[",
     "captionEnd": "]]></description>"
+  },
+  {
+    "name": "Yle",
+    "url": "https://yle.fi/rss/uutiset/paauutiset",
+    "titleBegin": "<title>",
+    "titleEnd": "</title>",
+    "urlBegin": "<link>",
+    "urlEnd": "</link>",
+    "captionBegin": "<description>",
+    "captionEnd": "</description>"
   }
 ]

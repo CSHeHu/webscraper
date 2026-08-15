@@ -103,6 +103,13 @@ void MainWindow::createGui() {
   });
   toolBar->addAction(il);
 
+  QAction *yle = new QAction("Yle", this);
+  connect(yle, &QAction::triggered, this, [this]() {
+    data->changeProvider("Yle");
+    data->updateData();
+  });
+  toolBar->addAction(yle);
+
   searchLineEdit = new QLineEdit(this);
   searchLineEdit->setPlaceholderText("Search...");
   toolBar->addWidget(searchLineEdit);
