@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(newscraper)
+project(newscraper VERSION 0.3.2)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT CMAKE_BUILD_TYPE)
@@ -50,7 +50,12 @@ add_dependencies(newscraper copy_config)
 include(GNUInstallDirs)
 
 set(APP_CONFIG_DIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/${PROJECT_NAME}")
-target_compile_definitions(newscraper PRIVATE APP_CONFIG_DIR="${APP_CONFIG_DIR}")
+target_compile_definitions(newscraper
+    PRIVATE
+    APP_CONFIG_DIR="${APP_CONFIG_DIR}"
+    APP_NAME="${PROJECT_NAME}"
+    APP_VERSION="${PROJECT_VERSION}"
+)
 
 install(TARGETS newscraper RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES config/config.json DESTINATION ${APP_CONFIG_DIR})

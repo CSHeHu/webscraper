@@ -21,13 +21,13 @@ cmake --build .
 
 ## Install on Arch Linux
 
+update PKGBUILD to match the latest version of newscraper
+
 ```bash
-cd packaging/arch
 makepkg -si
 ```
 
 The installed app reads its feed providers from `/etc/newscraper/config.json`.
-Your edits to that file are preserved across upgrades.
 
 ## License
 
