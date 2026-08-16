@@ -18,23 +18,6 @@ public:
     std::string headlineCaption;
   };
 
-  DataManager(QObject *parent = nullptr);
-
-  void updateData(const std::string &filterString = "");
-
-  std::vector<hl> *getHeadlines();
-
-  void changeProvider(const std::string &name);
-  void filterHeadlines(const std::string &filterString);
-
-signals:
-  void headlinesReady();
-  void fetchFailed(const QString &message);
-
-private slots:
-  void onReplyFinished();
-
-private:
   struct providerInfo {
     std::string name;
     std::string url;
@@ -46,6 +29,22 @@ private:
     std::string captionEnd;
   };
 
+  DataManager(QObject *parent = nullptr);
+
+  void updateData(const std::string &filterString = "");
+  std::vector<hl> *getHeadlines();
+  void changeProvider(const std::string &name);
+  void filterHeadlines(const std::string &filterString);
+  const std::unordered_map<std::string, providerInfo> &getProviders() const;
+
+signals:
+  void headlinesReady();
+  void fetchFailed(const QString &message);
+
+private slots:
+  void onReplyFinished();
+
+private:
   std::unordered_map<std::string, providerInfo> providers;
   std::vector<hl> headlines;
   std::string selectedProvider;

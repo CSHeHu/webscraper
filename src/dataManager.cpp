@@ -190,3 +190,8 @@ void DataManager::readConfigFile() {
     providers = loadedProviders;
   }
 }
+
+const std::unordered_map<std::string, DataManager::providerInfo> &
+DataManager::getProviders() const {
+  return providers;
+}

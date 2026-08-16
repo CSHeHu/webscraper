@@ -89,26 +89,19 @@ void MainWindow::createGui() {
   connect(quitAction, &QAction::triggered, QCoreApplication::quit);
   toolBar->addAction(quitAction);
 
-  QAction *is = new QAction("Iltasanomat", this);
-  connect(is, &QAction::triggered, this, [this]() {
-    data->changeProvider("Iltasanomat");
-    data->updateData();
-  });
-  toolBar->addAction(is);
-
-  QAction *il = new QAction("Iltalehti", this);
-  connect(il, &QAction::triggered, this, [this]() {
-    data->changeProvider("Iltalehti");
-    data->updateData();
-  });
-  toolBar->addAction(il);
-
-  QAction *yle = new QAction("Yle", this);
-  connect(yle, &QAction::triggered, this, [this]() {
-    data->changeProvider("Yle");
-    data->updateData();
-  });
-  toolBar->addAction(yle);
+  const std::unordered_map<std::string, DataManager::providerInfo>
+      &tmpProviders = data->getProviders();
+  auto it = tmpProviders.begin();
+  while (it != tmpProviders.end()) {
+    QAction *tmpAction =
+        new QAction(QString::fromStdString(it->second.name), this);
+    connect(tmpAction, &QAction::triggered, this, [this, it]() {
+      data->changeProvider(it->second.name);
+      data->updateData();
+    });
+    toolBar->addAction(tmpAction);
+    it++;
+  }
 
   searchLineEdit = new QLineEdit(this);
   searchLineEdit->setPlaceholderText("Search...");
