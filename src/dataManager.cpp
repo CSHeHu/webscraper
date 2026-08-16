@@ -6,10 +6,9 @@
 #include <QJsonObject>
 #include <QJsonParseError>
 #include <QNetworkRequest>
+#include <QStringList>
 #include <QUrl>
 #include <algorithm>
-
-const std::string CONFIGFILE = "/config/config.json";
 
 DataManager::DataManager(QObject *parent)
     : QObject(parent), headlines(),
@@ -138,14 +137,26 @@ std::string DataManager::toLowerHeadline(std::string str) {
 }
 
 void DataManager::readConfigFile() {
-  QFile configFile(QCoreApplication::applicationDirPath() +
-                    QString::fromStdString(CONFIGFILE));
-  if (!configFile.open(QIODevice::ReadOnly)) {
+  const QStringList candidates = {
+#ifdef APP_CONFIG_DIR
+      QStringLiteral(APP_CONFIG_DIR "/config.json"),
+#endif
+      QCoreApplication::applicationDirPath() +
+          QStringLiteral("/config/config.json"),
+  };
+
+  QByteArray fileData;
+  for (const QString &path : candidates) {
+    QFile configFile(path);
+    if (configFile.open(QIODevice::ReadOnly)) {
+      fileData = configFile.readAll();
+      configFile.close();
+      break;
+    }
+  }
+  if (fileData.isEmpty()) {
     return;
   }
-
-  QByteArray fileData = configFile.readAll();
-  configFile.close();
 
   QJsonParseError parseError;
   QJsonDocument doc = QJsonDocument::fromJson(fileData, &parseError);

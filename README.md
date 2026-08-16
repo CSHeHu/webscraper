@@ -1,4 +1,4 @@
-# WebScraper
+# Newscraper
 
 Qt desktop app for reading news headlines from RSS feeds.
 
@@ -16,8 +16,18 @@ Qt desktop app for reading news headlines from RSS feeds.
 mkdir build && cd build
 cmake ..
 cmake --build .
-./webscraper
+./newscraper
 ```
+
+## Install on Arch Linux
+
+```bash
+cd packaging/arch
+makepkg -si
+```
+
+The installed app reads its feed providers from `/etc/newscraper/config.json`.
+Your edits to that file are preserved across upgrades.
 
 ## License
 
