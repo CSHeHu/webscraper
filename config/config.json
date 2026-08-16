@@ -7,7 +7,9 @@
     "urlBegin": "<link>",
     "urlEnd": "</link>",
     "captionBegin": "<description>",
-    "captionEnd": "</description>"
+    "captionEnd": "</description>",
+    "pubDateBegin": "<pubDate>",
+    "pubDateEnd": "</pubDate>"
   },
   {
     "name": "Iltasanomat",
@@ -17,7 +19,9 @@
     "urlBegin": "<link>",
     "urlEnd": "</link>",
     "captionBegin": "<description><![CDATA[",
-    "captionEnd": "]]></description>"
+    "captionEnd": "]]></description>",
+    "pubDateBegin": "<pubDate>",
+    "pubDateEnd": "</pubDate>"
   },
   {
     "name": "Yle",
@@ -27,6 +31,8 @@
     "urlBegin": "<link>",
     "urlEnd": "</link>",
     "captionBegin": "<description>",
-    "captionEnd": "</description>"
+    "captionEnd": "</description>",
+    "pubDateBegin": "<pubDate>",
+    "pubDateEnd": "</pubDate>"
   }
 ]

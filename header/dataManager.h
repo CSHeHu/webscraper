@@ -16,6 +16,7 @@ public:
     std::string headline;
     std::string headlineUrl;
     std::string headlineCaption;
+    std::string pubDate;
   };
 
   struct providerInfo {
@@ -27,6 +28,8 @@ public:
     std::string urlEnd;
     std::string captionBegin;
     std::string captionEnd;
+    std::string pubDateBegin;
+    std::string pubDateEnd;
   };
 
   DataManager(QObject *parent = nullptr);

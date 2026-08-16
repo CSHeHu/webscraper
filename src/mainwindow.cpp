@@ -38,7 +38,10 @@ MainWindow::~MainWindow() {}
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
   QPushButton *button = qobject_cast<QPushButton *>(obj);
   if (event->type() == QEvent::Enter) {
-    newsInfoLabel->setText(button->property("caption").toString());
+    std::string caption = button->property("caption").toString().toStdString();
+    caption += "\n\n";
+    caption += button->property("pubDate").toString().toStdString();
+    newsInfoLabel->setText(QString::fromStdString(caption));
     return true;
   } else if (event->type() == QEvent::Leave) {
     return true;
@@ -141,11 +144,12 @@ void MainWindow::updateGui() {
 
     QPushButton *button = new QPushButton(
         QString::fromStdString(headline.headline), centralWidget);
+
     button->setProperty("url", QString::fromStdString(headline.headlineUrl));
     connect(button, &QPushButton::clicked, this, &MainWindow::openUrl);
-
     button->setProperty("caption",
                         QString::fromStdString(headline.headlineCaption));
+    button->setProperty("pubDate", QString::fromStdString(headline.pubDate));
 
     button->installEventFilter(this);
     buttonLayout->addWidget(button);

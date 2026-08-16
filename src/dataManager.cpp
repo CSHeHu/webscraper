@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <algorithm>
+#include <iostream>
 
 DataManager::DataManager(QObject *parent)
     : QObject(parent), headlines(),
@@ -101,7 +102,20 @@ void DataManager::parseResponse(const std::string &responseData) {
         captionStartPos + tmpProvider.captionBegin.size(),
         captionEndPos - captionStartPos - tmpProvider.captionBegin.size());
 
-    hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp};
+    size_t pubDateStartPos =
+        responseData.find(tmpProvider.pubDateBegin, lastPos);
+    size_t pubDateEndPos =
+        responseData.find(tmpProvider.pubDateEnd, pubDateStartPos);
+    if (pubDateStartPos == std::string::npos ||
+        pubDateEndPos == std::string::npos) {
+      lastPos = std::string::npos;
+      continue;
+    }
+    std::string hlPubDateTemp = responseData.substr(
+        pubDateStartPos + tmpProvider.pubDateBegin.size(),
+        pubDateEndPos - pubDateStartPos - tmpProvider.pubDateBegin.size());
+
+    hl tmpHeadline = {hlTemp, hlUrlTemp, hlCaptionTemp, hlPubDateTemp};
     headlines.push_back(tmpHeadline);
 
     lastPos += tmpProvider.titleBegin.size();
@@ -178,6 +192,8 @@ void DataManager::readConfigFile() {
     provider.urlEnd = obj.value("urlEnd").toString().toStdString();
     provider.captionBegin = obj.value("captionBegin").toString().toStdString();
     provider.captionEnd = obj.value("captionEnd").toString().toStdString();
+    provider.pubDateBegin = obj.value("pubDateBegin").toString().toStdString();
+    provider.pubDateEnd = obj.value("pubDateEnd").toString().toStdString();
 
     if (provider.name.empty() || provider.url.empty()) {
       continue;
