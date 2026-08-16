@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(newscraper VERSION 0.3.2)
+project(newscraper VERSION 0.3.3)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT CMAKE_BUILD_TYPE)

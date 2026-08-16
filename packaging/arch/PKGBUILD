@@ -12,13 +12,17 @@ backup=('etc/newscraper/config.json')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
 sha256sums=('SKIP')
 
+prepare(){
+  rm -rf build
+}
+
 build() {
   local cmake_args=(
     -B build
     -S "$pkgname-$pkgver"
     -DCMAKE_BUILD_TYPE=None
     -DCMAKE_INSTALL_PREFIX=/usr
-    -Wno-dev
+    -Wno-author
   )
 
   cmake "${cmake_args[@]}"
