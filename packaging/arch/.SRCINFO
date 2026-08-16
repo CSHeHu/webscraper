@@ -1,0 +1,16 @@
+pkgbase = newscraper
+	pkgdesc = Qt desktop app for reading news headlines from RSS feeds
+	pkgver = 0.3.0
+	pkgrel = 1
+	url = https://github.com/CSHeHu/newscraper
+	arch = x86_64
+	license = MIT
+	makedepends = cmake
+	depends = qt6-base
+	depends = gcc-libs
+	depends = glibc
+	backup = etc/newscraper/config.json
+	source = newscraper-0.3.0.tar.gz::https://github.com/CSHeHu/newscraper/archive/v0.3.0.tar.gz
+	sha256sums = SKIP
+
+pkgname = newscraper

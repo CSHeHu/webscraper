@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Newscraper
+Comment=Read news headlines from RSS feeds
+Exec=newscraper
+Icon=internet-news-reader
+Categories=Network;News;Qt;
+Terminal=false

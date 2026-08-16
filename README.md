@@ -1,4 +1,4 @@
-# WebScraper
+# Newscraper
 
 Qt desktop app for reading news headlines from RSS feeds.
 
@@ -16,7 +16,7 @@ Qt desktop app for reading news headlines from RSS feeds.
 mkdir build && cd build
 cmake ..
 cmake --build .
-./webscraper
+./newscraper
 ```
 
 ## License
