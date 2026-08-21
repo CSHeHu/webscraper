@@ -39,6 +39,7 @@ public:
   void changeProvider(const std::string &name);
   void filterHeadlines(const std::string &filterString);
   const std::unordered_map<std::string, providerInfo> &getProviders() const;
+  void sortByDate();
 
 signals:
   void headlinesReady();
@@ -57,6 +58,7 @@ private:
   void parseResponse(const std::string &responseData);
   void readConfigFile();
   std::string toLowerHeadline(std::string str);
+  bool sortNewestFirst = false;
 };
 
 #endif // DATAMANAGER_H

@@ -1,5 +1,6 @@
 #include "dataManager.h"
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -9,7 +10,6 @@
 #include <QStringList>
 #include <QUrl>
 #include <algorithm>
-#include <iostream>
 
 DataManager::DataManager(QObject *parent)
     : QObject(parent), headlines(),
@@ -28,6 +28,7 @@ void DataManager::updateData(const std::string &filterString) {
   providerInfo tmpProvider = providers.at(selectedProvider);
   headlines.clear();
   pendingFilter = filterString;
+  sortNewestFirst = false;
 
   QNetworkRequest request(QUrl(QString::fromStdString(tmpProvider.url)));
   currentReply = networkManager->get(request);
@@ -210,4 +211,52 @@ void DataManager::readConfigFile() {
 const std::unordered_map<std::string, DataManager::providerInfo> &
 DataManager::getProviders() const {
   return providers;
+}
+
+// Convert a pubDate string to milliseconds since epoch, handling named time
+// zones
+static qint64 pubDateToMSecs(const std::string &pubDate) {
+  static const std::vector<std::pair<QString, QString>> namedZones = {
+      {QStringLiteral("GMT"), QStringLiteral("+0000")},
+      {QStringLiteral("UTC"), QStringLiteral("+0000")},
+      {QStringLiteral("UT"), QStringLiteral("+0000")},
+      {QStringLiteral("EDT"), QStringLiteral("-0400")},
+      {QStringLiteral("EST"), QStringLiteral("-0500")},
+      {QStringLiteral("CDT"), QStringLiteral("-0500")},
+      {QStringLiteral("CST"), QStringLiteral("-0600")},
+      {QStringLiteral("MDT"), QStringLiteral("-0600")},
+      {QStringLiteral("MST"), QStringLiteral("-0700")},
+      {QStringLiteral("PDT"), QStringLiteral("-0700")},
+      {QStringLiteral("PST"), QStringLiteral("-0800")},
+  };
+
+  QString text = QString::fromStdString(pubDate).trimmed();
+  for (const auto &[name, offset] : namedZones) {
+    if (text.endsWith(name)) {
+      text.replace(text.size() - name.size(), name.size(), offset);
+      break;
+    }
+  }
+
+  const QDateTime pubDateTime = QDateTime::fromString(text, Qt::RFC2822Date);
+  return pubDateTime.isValid() ? pubDateTime.toMSecsSinceEpoch() : 0;
+}
+
+void DataManager::sortByDate() {
+  sortNewestFirst = !sortNewestFirst;
+
+  std::stable_sort(headlines.begin(), headlines.end(),
+                   [this](const hl &a, const hl &b) {
+                     const qint64 lhs = pubDateToMSecs(a.pubDate);
+                     const qint64 rhs = pubDateToMSecs(b.pubDate);
+
+                     // Headlines with no usable date sort last in both
+                     // directions, rather than leading the list when ascending.
+                     if ((lhs == 0) != (rhs == 0)) {
+                       return rhs == 0;
+                     }
+                     return sortNewestFirst ? lhs > rhs : lhs < rhs;
+                   });
+
+  emit headlinesReady();
 }

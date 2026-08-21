@@ -92,6 +92,11 @@ void MainWindow::createGui() {
   connect(quitAction, &QAction::triggered, QCoreApplication::quit);
   toolBar->addAction(quitAction);
 
+  QAction *sortAction = new QAction("Sort", this);
+  connect(sortAction, &QAction::triggered, this,
+          [this]() { data->sortByDate(); });
+  toolBar->addAction(sortAction);
+
   const std::unordered_map<std::string, DataManager::providerInfo>
       &tmpProviders = data->getProviders();
   auto it = tmpProviders.begin();
