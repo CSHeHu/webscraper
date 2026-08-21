@@ -32,6 +32,8 @@ public:
     std::string pubDateEnd;
   };
 
+  enum sortingMode { DATE, TITLE, CAPTION };
+
   DataManager(QObject *parent = nullptr);
 
   void updateData(const std::string &filterString = "");
@@ -39,7 +41,7 @@ public:
   void changeProvider(const std::string &name);
   void filterHeadlines(const std::string &filterString);
   const std::unordered_map<std::string, providerInfo> &getProviders() const;
-  void sortByDate();
+  void sortHeadlines(sortingMode mode);
 
 signals:
   void headlinesReady();
@@ -49,6 +51,9 @@ private slots:
   void onReplyFinished();
 
 private:
+  bool sortedDate = false;
+  bool sortedTitle = false;
+  bool sortedCaption = false;
   std::unordered_map<std::string, providerInfo> providers;
   std::vector<hl> headlines;
   std::string selectedProvider;
@@ -58,7 +63,6 @@ private:
   void parseResponse(const std::string &responseData);
   void readConfigFile();
   std::string toLowerHeadline(std::string str);
-  bool sortNewestFirst = false;
 };
 
 #endif // DATAMANAGER_H

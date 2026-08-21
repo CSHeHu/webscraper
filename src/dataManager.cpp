@@ -28,7 +28,6 @@ void DataManager::updateData(const std::string &filterString) {
   providerInfo tmpProvider = providers.at(selectedProvider);
   headlines.clear();
   pendingFilter = filterString;
-  sortNewestFirst = false;
 
   QNetworkRequest request(QUrl(QString::fromStdString(tmpProvider.url)));
   currentReply = networkManager->get(request);
@@ -242,21 +241,30 @@ static qint64 pubDateToMSecs(const std::string &pubDate) {
   return pubDateTime.isValid() ? pubDateTime.toMSecsSinceEpoch() : 0;
 }
 
-void DataManager::sortByDate() {
-  sortNewestFirst = !sortNewestFirst;
-
-  std::stable_sort(headlines.begin(), headlines.end(),
-                   [this](const hl &a, const hl &b) {
-                     const qint64 lhs = pubDateToMSecs(a.pubDate);
-                     const qint64 rhs = pubDateToMSecs(b.pubDate);
-
-                     // Headlines with no usable date sort last in both
-                     // directions, rather than leading the list when ascending.
-                     if ((lhs == 0) != (rhs == 0)) {
-                       return rhs == 0;
-                     }
-                     return sortNewestFirst ? lhs > rhs : lhs < rhs;
-                   });
-
+void DataManager::sortHeadlines(sortingMode mode) {
+  std::stable_sort(
+      headlines.begin(), headlines.end(),
+      [this, mode](const hl &a, const hl &b) {
+        switch (mode) {
+        case DATE:
+          return sortedDate
+                     ? pubDateToMSecs(a.pubDate) > pubDateToMSecs(b.pubDate)
+                     : pubDateToMSecs(a.pubDate) < pubDateToMSecs(b.pubDate);
+        case TITLE:
+          return sortedTitle ? a.headline > b.headline
+                             : a.headline < b.headline;
+        case CAPTION:
+          return sortedCaption ? a.headlineCaption > b.headlineCaption
+                               : a.headlineCaption < b.headlineCaption;
+        }
+        return false;
+      });
+  if (mode == DATE) {
+    sortedDate = !sortedDate;
+  } else if (mode == TITLE) {
+    sortedTitle = !sortedTitle;
+  } else if (mode == CAPTION) {
+    sortedCaption = !sortedCaption;
+  }
   emit headlinesReady();
 }

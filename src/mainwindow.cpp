@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "dataManager.h"
 #include <QApplication>
+#include <QMenu>
 #include <qlabel.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -92,11 +93,24 @@ void MainWindow::createGui() {
   connect(quitAction, &QAction::triggered, QCoreApplication::quit);
   toolBar->addAction(quitAction);
 
-  QAction *sortAction = new QAction("Sort", this);
-  connect(sortAction, &QAction::triggered, this,
-          [this]() { data->sortByDate(); });
-  toolBar->addAction(sortAction);
+  QAction *sortByDateAction = new QAction("Date", this);
+  connect(sortByDateAction, &QAction::triggered, this,
+          [this]() { data->sortHeadlines(DataManager::DATE); });
+  QAction *sortByTitleAction = new QAction("Title", this);
+  connect(sortByTitleAction, &QAction::triggered, this,
+          [this]() { data->sortHeadlines(DataManager::TITLE); });
 
+  QAction *sortByCaptionAction = new QAction("Caption", this);
+  connect(sortByCaptionAction, &QAction::triggered, this,
+          [this]() { data->sortHeadlines(DataManager::CAPTION); });
+
+  QMenu *sortMenu = new QMenu("Sort", this);
+  sortMenu->addAction(sortByDateAction);
+  sortMenu->addAction(sortByTitleAction);
+  sortMenu->addAction(sortByCaptionAction);
+  toolBar->addAction(sortMenu->menuAction());
+
+  QMenu *providerMenu = new QMenu("Provider", this);
   const std::unordered_map<std::string, DataManager::providerInfo>
       &tmpProviders = data->getProviders();
   auto it = tmpProviders.begin();
@@ -107,9 +121,10 @@ void MainWindow::createGui() {
       data->changeProvider(it->second.name);
       data->updateData();
     });
-    toolBar->addAction(tmpAction);
+    providerMenu->addAction(tmpAction);
     it++;
   }
+  toolBar->addAction(providerMenu->menuAction());
 
   searchLineEdit = new QLineEdit(this);
   searchLineEdit->setPlaceholderText("Search...");
