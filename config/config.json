@@ -1,5 +1,6 @@
 [
   {
+    "type": "rss",
     "name": "Iltalehti",
     "url": "https://www.iltalehti.fi/rss/rss.xml",
     "titleBegin": "<title>",
@@ -12,6 +13,7 @@
     "pubDateEnd": "</pubDate>"
   },
   {
+    "type": "rss",
     "name": "Iltasanomat",
     "url": "https://www.is.fi/rss/tuoreimmat.xml",
     "titleBegin": "<title><![CDATA[",
@@ -24,6 +26,7 @@
     "pubDateEnd": "</pubDate>"
   },
   {
+    "type": "rss",
     "name": "Yle",
     "url": "https://yle.fi/rss/uutiset/paauutiset",
     "titleBegin": "<title>",
@@ -34,5 +37,10 @@
     "captionEnd": "</description>",
     "pubDateBegin": "<pubDate>",
     "pubDateEnd": "</pubDate>"
+  },
+  {
+    "type": "config",
+    "theme": "dark"
   }
 ]
+

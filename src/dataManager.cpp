@@ -25,7 +25,14 @@ void DataManager::updateData(const std::string &filterString) {
     currentReply->abort();
   }
 
-  providerInfo tmpProvider = providers.at(selectedProvider);
+  auto providerIt = providers.find(selectedProvider);
+  if (providerIt == providers.end()) {
+    emit fetchFailed(tr("No feed providers loaded. Check config.json — every "
+                        "provider entry needs \"type\": \"rss\"."));
+    return;
+  }
+
+  providerInfo tmpProvider = providerIt->second;
   headlines.clear();
   pendingFilter = filterString;
 
@@ -183,23 +190,32 @@ void DataManager::readConfigFile() {
   for (const QJsonValue &entry : doc.array()) {
     QJsonObject obj = entry.toObject();
 
-    providerInfo provider;
-    provider.name = obj.value("name").toString().toStdString();
-    provider.url = obj.value("url").toString().toStdString();
-    provider.titleBegin = obj.value("titleBegin").toString().toStdString();
-    provider.titleEnd = obj.value("titleEnd").toString().toStdString();
-    provider.urlBegin = obj.value("urlBegin").toString().toStdString();
-    provider.urlEnd = obj.value("urlEnd").toString().toStdString();
-    provider.captionBegin = obj.value("captionBegin").toString().toStdString();
-    provider.captionEnd = obj.value("captionEnd").toString().toStdString();
-    provider.pubDateBegin = obj.value("pubDateBegin").toString().toStdString();
-    provider.pubDateEnd = obj.value("pubDateEnd").toString().toStdString();
-
-    if (provider.name.empty() || provider.url.empty()) {
+    if (obj.value("type").toString().toStdString() == "config") {
+      std::string tmpTheme = obj.value("theme").toString().toStdString();
+      tmpTheme == "dark" ? defaults.theme = DARK : defaults.theme = LIGHT;
       continue;
     }
 
-    loadedProviders.insert({provider.name, provider});
+    if (obj.value("type").toString().toStdString() == "rss") {
+      providerInfo provider;
+      provider.name = obj.value("name").toString().toStdString();
+      provider.url = obj.value("url").toString().toStdString();
+      provider.titleBegin = obj.value("titleBegin").toString().toStdString();
+      provider.titleEnd = obj.value("titleEnd").toString().toStdString();
+      provider.urlBegin = obj.value("urlBegin").toString().toStdString();
+      provider.urlEnd = obj.value("urlEnd").toString().toStdString();
+      provider.captionBegin =
+          obj.value("captionBegin").toString().toStdString();
+      provider.captionEnd = obj.value("captionEnd").toString().toStdString();
+      provider.pubDateBegin =
+          obj.value("pubDateBegin").toString().toStdString();
+      provider.pubDateEnd = obj.value("pubDateEnd").toString().toStdString();
+
+      if (provider.name.empty() || provider.url.empty()) {
+        continue;
+      }
+      loadedProviders.insert({provider.name, provider});
+    }
   }
 
   if (!loadedProviders.empty()) {
@@ -242,37 +258,36 @@ static qint64 pubDateToMSecs(const std::string &pubDate) {
 }
 
 void DataManager::sortHeadlines(sortingMode mode) {
-  std::stable_sort(
-      headlines.begin(), headlines.end(),
-      [this, mode](const hl &a, const hl &b) {
-        switch (mode) {
-        case DATE: {
-          const qint64 lhs = pubDateToMSecs(a.pubDate);
-          const qint64 rhs = pubDateToMSecs(b.pubDate);
-          if ((lhs == 0) != (rhs == 0)) {
-            return rhs == 0;
-          }
-          return sortedDate ? lhs > rhs : lhs < rhs;
-        }
-        case TITLE: {
-          const std::string &lhs = a.headline;
-          const std::string &rhs = b.headline;
-          if (lhs.empty() != rhs.empty()) {
-            return rhs.empty();
-          }
-          return sortedTitle ? lhs > rhs : lhs < rhs;
-        }
-        case CAPTION: {
-          const std::string &lhs = a.headlineCaption;
-          const std::string &rhs = b.headlineCaption;
-          if (lhs.empty() != rhs.empty()) {
-            return rhs.empty();
-          }
-          return sortedCaption ? lhs > rhs : lhs < rhs;
-        }
-        }
-        return false;
-      });
+  std::stable_sort(headlines.begin(), headlines.end(),
+                   [this, mode](const hl &a, const hl &b) {
+                     switch (mode) {
+                     case DATE: {
+                       const qint64 lhs = pubDateToMSecs(a.pubDate);
+                       const qint64 rhs = pubDateToMSecs(b.pubDate);
+                       if ((lhs == 0) != (rhs == 0)) {
+                         return rhs == 0;
+                       }
+                       return sortedDate ? lhs > rhs : lhs < rhs;
+                     }
+                     case TITLE: {
+                       const std::string &lhs = a.headline;
+                       const std::string &rhs = b.headline;
+                       if (lhs.empty() != rhs.empty()) {
+                         return rhs.empty();
+                       }
+                       return sortedTitle ? lhs > rhs : lhs < rhs;
+                     }
+                     case CAPTION: {
+                       const std::string &lhs = a.headlineCaption;
+                       const std::string &rhs = b.headlineCaption;
+                       if (lhs.empty() != rhs.empty()) {
+                         return rhs.empty();
+                       }
+                       return sortedCaption ? lhs > rhs : lhs < rhs;
+                     }
+                     }
+                     return false;
+                   });
   if (mode == DATE) {
     sortedDate = !sortedDate;
   } else if (mode == TITLE) {
@@ -281,4 +296,8 @@ void DataManager::sortHeadlines(sortingMode mode) {
     sortedCaption = !sortedCaption;
   }
   emit headlinesReady();
+}
+
+const DataManager::defaultSettings &DataManager::getDefaultSettings() const {
+  return defaults;
 }

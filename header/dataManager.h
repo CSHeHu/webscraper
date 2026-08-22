@@ -12,6 +12,9 @@ class DataManager : public QObject {
   Q_OBJECT
 
 public:
+  enum sortingMode { DATE, TITLE, CAPTION };
+  enum themeMode { LIGHT, DARK };
+
   struct hl {
     std::string headline;
     std::string headlineUrl;
@@ -32,7 +35,9 @@ public:
     std::string pubDateEnd;
   };
 
-  enum sortingMode { DATE, TITLE, CAPTION };
+  struct defaultSettings {
+    themeMode theme = LIGHT;
+  };
 
   DataManager(QObject *parent = nullptr);
 
@@ -42,6 +47,7 @@ public:
   void filterHeadlines(const std::string &filterString);
   const std::unordered_map<std::string, providerInfo> &getProviders() const;
   void sortHeadlines(sortingMode mode);
+  const defaultSettings &getDefaultSettings() const;
 
 signals:
   void headlinesReady();
@@ -54,6 +60,7 @@ private:
   bool sortedDate = false;
   bool sortedTitle = false;
   bool sortedCaption = false;
+  defaultSettings defaults;
   std::unordered_map<std::string, providerInfo> providers;
   std::vector<hl> headlines;
   std::string selectedProvider;
