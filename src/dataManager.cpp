@@ -246,16 +246,30 @@ void DataManager::sortHeadlines(sortingMode mode) {
       headlines.begin(), headlines.end(),
       [this, mode](const hl &a, const hl &b) {
         switch (mode) {
-        case DATE:
-          return sortedDate
-                     ? pubDateToMSecs(a.pubDate) > pubDateToMSecs(b.pubDate)
-                     : pubDateToMSecs(a.pubDate) < pubDateToMSecs(b.pubDate);
-        case TITLE:
-          return sortedTitle ? a.headline > b.headline
-                             : a.headline < b.headline;
-        case CAPTION:
-          return sortedCaption ? a.headlineCaption > b.headlineCaption
-                               : a.headlineCaption < b.headlineCaption;
+        case DATE: {
+          const qint64 lhs = pubDateToMSecs(a.pubDate);
+          const qint64 rhs = pubDateToMSecs(b.pubDate);
+          if ((lhs == 0) != (rhs == 0)) {
+            return rhs == 0;
+          }
+          return sortedDate ? lhs > rhs : lhs < rhs;
+        }
+        case TITLE: {
+          const std::string &lhs = a.headline;
+          const std::string &rhs = b.headline;
+          if (lhs.empty() != rhs.empty()) {
+            return rhs.empty();
+          }
+          return sortedTitle ? lhs > rhs : lhs < rhs;
+        }
+        case CAPTION: {
+          const std::string &lhs = a.headlineCaption;
+          const std::string &rhs = b.headlineCaption;
+          if (lhs.empty() != rhs.empty()) {
+            return rhs.empty();
+          }
+          return sortedCaption ? lhs > rhs : lhs < rhs;
+        }
         }
         return false;
       });
