@@ -27,7 +27,14 @@ update PKGBUILD to match the latest version of newscraper
 makepkg -si
 ```
 
-The installed app reads its feed providers from `/etc/newscraper/config.json`.
+## Configuration
+
+Feeds come from `/etc/newscraper/config.json` when installed, or `config/config.json`
+next to the binary when running from `build/`.
+
+It is a JSON array of providers. `name` shows in the Provider menu, `url` is the feed,
+and the eight `*Begin`/`*End` keys are the literal substrings each field is sliced out
+with — copy an existing entry and adjust. All ten keys are required.
 
 ## License
 
